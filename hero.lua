@@ -93,9 +93,9 @@ function Hero.resolve_vertical_collision(hero, enemies)
       
       if Box.collides(hero_real_movebox, enemy_real_movebox) then
         if hero.vy == 1 then
-          hero.y = enemy.y - 100 - 1
+          hero.y = enemy.y - enemy_real_movebox.height - 1
         elseif hero.vy == -1 then
-          hero.y = enemy.y + 100 + 1
+          hero.y = enemy.y + hero_movebox.height + 1
         end
       end
     end
