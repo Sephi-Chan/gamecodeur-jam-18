@@ -21,7 +21,7 @@ end
 
 function love.update(delta)
   Animation.animate_entities(Entity.entities(), delta)
-  Hero.update(hero, delta)
+  Hero.update(hero, Entity.enemies(), delta)
 end
 
 

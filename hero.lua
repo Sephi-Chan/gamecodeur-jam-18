@@ -1,13 +1,13 @@
 local Hero = {}
 
 
-function Hero.update(hero, delta)
-  Hero.attack(hero, delta)
-  Hero.move(hero, delta)
+function Hero.update(hero, enemies, delta)
+  Hero.attack(hero, enemies, delta)
+  Hero.move(hero, enemies, delta)
 end
 
 
-function Hero.move(hero, delta)
+function Hero.move(hero, enemies, delta)
   if hero.attacking then return end
   
   hero.vy = 0
@@ -34,10 +34,10 @@ function Hero.move(hero, delta)
   end
   
   hero.x = hero.x + hero.velocity * delta * hero.vx
-  Hero.resolve_horizontal_collision(hero, Entity.enemies())
+  Hero.resolve_horizontal_collision(hero, enemies)
   
   hero.y = hero.y + hero.velocity * delta * hero.vy
-  Hero.resolve_vertical_collision(hero, Entity.enemies())
+  Hero.resolve_vertical_collision(hero, enemies)
 end
 
 
@@ -46,13 +46,13 @@ function Hero.start_attack(hero)
 end
 
 
-function Hero.attack(hero, delta)
+function Hero.attack(hero, enemies, delta)
   if not hero.attacking then return end
   local last_animation_frame = #hero.animations[hero.animation.name].frames
   
   Animation.replace(hero, "attack1")
   
-  if hero.animation.frame == last_animation_frame then
+  if hero.animation.frame == last_frame then
     hero.attacking = false
   end
 end
