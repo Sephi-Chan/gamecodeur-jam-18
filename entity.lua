@@ -44,8 +44,24 @@ function Entity.get(name)
 end
 
 
+function Entity.sortByY(entities)
+  local list = Entity.asArray(entities)
+  table.sort(list, function(a, b) return a.y < b.y end)
+  return list
+end
+
+
+function Entity.asArray(entities)
+  local list = {}
+  for _, entity in pairs(entities) do
+    table.insert(list, entity)
+  end
+  return list
+end
+
+
 function Entity.draw(options)
-  for _, entity in pairs(Entity._entities) do
+  for _, entity in ipairs(Entity.sortByY(Entity._entities)) do
     local frame = entity.animations[entity.animation.name].frames[entity.animation.frame]
     local scale_x = entity.animation.flip and -1 or 1
 
