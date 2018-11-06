@@ -12,7 +12,8 @@ function Layers:Layers(pX,pY,pImg,pScaleX,pScaleY)
   
 end
 
-function Layers:Draw()
+function Layers.draw(pLayers)
+  local self = pLayers
   love.graphics.draw(self.img,self.x-self.w,self.y,0,self.scaleX,self.scaleY)
   love.graphics.draw(self.img,self.x,self.y,0,self.scaleX,self.scaleY)
   love.graphics.draw(self.img,self.x+self.w,self.y,0,self.scaleX,self.scaleY)
@@ -20,6 +21,9 @@ end
 
 function Layers:Update(delta,pCamera)
   if pCamera.x < self.x - self.w then
+    self.x = pCamera.x
+  end
+  if pCamera.x > self.x + self.w then
     self.x = pCamera.x
   end
   

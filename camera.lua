@@ -18,7 +18,7 @@ self.rotation = 0
 self.w = 800
 self.h = 600
 
-self.layers = {}
+self.objects = {}
 end
 
 function Camera:newLayer(scale)
@@ -31,15 +31,10 @@ function Camera:newLayer(scale)
   --table.sort(self.layers, function(a, b) return a.scale < b.scale end)
 end
 
-function Camera:AddToLayers(pScale,pObject)
-   local object = {scale = pScale, obj = pObject}
-   --[[
-  if self.layers[pScale] == nil then
-    self:newLayer(pScale)
-  end
-  --]]
-  table.insert(self.layers,object)
-  table.sort(self.layers, function(a,b) return a.scale>b.scale end)
+function Camera:AddToObjects(pScale,pRefTable)
+   local object = {scale = pScale, refTable = pRefTable}
+  table.insert(self.objects,object)
+  table.sort(self.objects, function(a,b) return a.scale>b.scale end)
 end
 
 
@@ -107,17 +102,12 @@ end
 function Camera:Draw()
   local bx, by = self.x, self.y
 
-  for scale, v in pairs(self.layers) do
+  for _, object in pairs(self.objects) do
     --for _,k in ipairs(v)do
-      self.posModifX = bx * 1/v.scale
-      self.posModifY = by * 1/v.scale
-      
+      self.posModifX = bx * 1/object.scale
+      self.posModifY = by * 1/object.scale
       self:set()
-      if v.obj[draw] == nil then
-        v.obj:Draw()
-      else
-      v.obj.draw()
-      end
+      object.refTable.draw(object.refTable)
       self:unset()
     --end
   end

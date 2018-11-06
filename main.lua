@@ -26,6 +26,8 @@ layers5 = love.graphics.newImage("images/layers/5.png")
 layers6 = love.graphics.newImage("images/layers/6.png")
 
 local la1 = layerClass.new(0,0,layers1,0.41,0.45)
+local la2 = layerClass.new(0,0,layers2,0.41,0.45)
+local la3 = layerClass.new(0,0,layers3,0.41,0.45)
 
 
 
@@ -42,8 +44,10 @@ function love.load()
   Enemy.new(300, 200, { name = "foo" })
   
   camera:MustFollow(hero)
-  camera:AddToLayers(1,Entity)
-  camera:AddToLayers(5,la1)
+  camera:AddToObjects(1,Entity)
+  camera:AddToObjects(5,la1)
+  camera:AddToObjects(4,la2)
+  camera:AddToObjects(3,la3)
   --camera:AddToLayers(2,layers4)
   
   -----
