@@ -10,37 +10,22 @@ Entity    = require("entity")
 Hero      = require("hero")
 Enemy     = require("enemy")
 Box       = require("box")
-
 local cameraClass = require("camera")
 camera = cameraClass.new()
+local layerClass = require("layers")
+
+
 
 --Layers
 -----
-layers1 = {}
-layers1.img = love.graphics.newImage("images/layers/1.png")
-layers2 = {}
-layers2.img = love.graphics.newImage("images/layers/2.png")
-layers3 = {}
-layers3.img = love.graphics.newImage("images/layers/3.png")
-layers4 = {}
-layers4.img = love.graphics.newImage("images/layers/4.png")
+layers1 = love.graphics.newImage("images/layers/1.png")
+layers2 = love.graphics.newImage("images/layers/2.png")
+layers3 = love.graphics.newImage("images/layers/3.png")
+layers4 = love.graphics.newImage("images/layers/4.png")
 layers5 = love.graphics.newImage("images/layers/5.png")
 layers6 = love.graphics.newImage("images/layers/6.png")
 
-
-function layers1.draw()
-  love.graphics.draw(layers1.img,0,0,0,0.41,0.45)
-end
-function layers2.draw()
-  love.graphics.draw(layers2.img,0,0,0,0.41,0.45)
-end
-function layers3.draw()
-  love.graphics.draw(layers3.img,0,0,0,0.41,0.45)
-end
-
-function layers4.draw()
-  love.graphics.draw(layers4.img,0,0,0,0.41,0.45)
-end
+local la1 = layerClass.new(0,0,layers1,0.41,0.45)
 
 
 
@@ -58,9 +43,7 @@ function love.load()
   
   camera:MustFollow(hero)
   camera:AddToLayers(1,Entity)
-  camera:AddToLayers(5,layers1)
-  camera:AddToLayers(4,layers2)
-  camera:AddToLayers(3,layers3)
+  camera:AddToLayers(5,la1)
   --camera:AddToLayers(2,layers4)
   
   -----

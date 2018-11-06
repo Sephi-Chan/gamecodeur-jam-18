@@ -111,8 +111,13 @@ function Camera:Draw()
     --for _,k in ipairs(v)do
       self.posModifX = bx * 1/v.scale
       self.posModifY = by * 1/v.scale
+      
       self:set()
+      if v.obj[draw] == nil then
+        v.obj:Draw()
+      else
       v.obj.draw()
+      end
       self:unset()
     --end
   end
