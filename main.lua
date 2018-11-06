@@ -14,7 +14,7 @@ function love.load()
   love.graphics.setLineStyle("rough")
   love.graphics.setLineWidth(1)
 
-  hero      = Hero.new(200, 200)
+  hero = Hero.new(200, 200)
   Enemy.new(300, 200, { name = "foo" })
 end
 
@@ -26,7 +26,7 @@ end
 
 
 function love.draw()
-  Entity.draw()
+  Entity.draw(Entity.sortByY(Entity.entities()))
 end
 
 

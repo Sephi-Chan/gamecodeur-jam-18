@@ -60,9 +60,9 @@ function Entity.asArray(entities)
 end
 
 
-function Entity.draw(options)
-  for _, entity in ipairs(Entity.sortByY(Entity._entities)) do
-    local frame = entity.animations[entity.animation.name].frames[entity.animation.frame]
+function Entity.draw(entities, options)
+  for _, entity in ipairs(entities) do
+    local frame   = entity.animations[entity.animation.name].frames[entity.animation.frame]
     local scale_x = entity.animation.flip and -1 or 1
 
     if entity.group == "enemy" then
