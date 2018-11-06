@@ -100,6 +100,7 @@ function Entity.draw(entities, options)
       end
     end
   end
+   love.graphics.setColor(1, 1, 1)
 end
 
 
