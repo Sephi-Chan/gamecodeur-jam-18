@@ -56,8 +56,19 @@ function Hero.attack(hero, enemies, delta)
     local real_hitbox = Box.coordinates(hero, hero_frame.hitboxes[1])
 
     for _, enemy in pairs(enemies) do
-      if not hero.attack_targets[enemy.name] then -- wound an enemy only once per attack.
-        local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
+      local enemy_frame   = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
+      local enemy_movebox = enemy_frame.moveboxes[1]
+
+      if hero.attack_targets[enemy.name] then
+        break -- wound an enemy only once per attack.
+      
+      elseif hero.y < enemy.y - enemy_movebox.height then 
+        break -- hero is too far on the screen, only hit the targets with around the same Y.
+
+      elseif enemy.y < hero.y - enemy_movebox.height then
+        break -- hero is too near on the screen.
+
+      else
         local enemy_real_hurtbox = Box.coordinates(enemy, enemy_frame.hurtboxes[1])
 
         if Box.collides(real_hitbox, enemy_real_hurtbox) then
