@@ -48,15 +48,33 @@ end
 
 function Hero.attack(hero, enemies, delta)
   if not hero.attacking then return end
-  local last_animation_frame = #hero.animations[hero.animation.name].frames
+
+  local hero_frame = hero.animations[hero.animation.name].frames[hero.animation.frame]
+  local last_frame = #hero.animations[hero.animation.name].frames
+
+  if hero_frame.hitboxes then
+    local real_hitbox = Box.coordinates(hero, hero_frame.hitboxes[1])
+
+    for _, enemy in pairs(enemies) do
+      if not hero.attack_targets[enemy.name] then -- wound an enemy only once per attack.
+        local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
+        local enemy_real_hurtbox = Box.coordinates(enemy, enemy_frame.hurtboxes[1])
+
+        if Box.collides(real_hitbox, enemy_real_hurtbox) then
+          hero.attack_targets[enemy.name] = true
+          Entity.wound(hero, enemy)
+        end
+      end
+    end
+  end
   
   Animation.replace(hero, "attack1")
   
   if hero.animation.frame == last_frame then
-    hero.attacking = false
+    hero.attacking      = false
+    hero.attack_targets = {}
   end
 end
-
 
 
 function Hero.resolve_horizontal_collision(hero, enemies)

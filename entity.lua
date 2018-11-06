@@ -8,15 +8,19 @@ local Entity = {
 
 function Entity.new(name, sprite, options)
   Entity._entities[name] = {
-    name      = name,
-    sprite    = sprite,
-    x         = options.x or 0,
-    y         = options.y or 0,
-    vx        = options.vx or 0,
-    vy        = options.vy or 0,
-    velocity  = options.velocity or 160,
-    group     = options.group,
-    attacking = false  
+    name       = name,
+    sprite     = sprite,
+    x          = options.x or 0,
+    y          = options.y or 0,
+    vx         = options.vx or 0,
+    vy         = options.vy or 0,
+    velocity   = options.velocity or 160,
+    group      = options.group,
+    health     = options.health or 25,
+    max_health = options.health or 25,
+
+    attacking      = false,
+    attack_targets = {}
   }
   
   return Entity._entities[name]
@@ -95,6 +99,15 @@ function Entity.draw(entities, options)
         love.graphics.rectangle("line", box.x, box.y, box.width, box.height)
       end
     end
+  end
+end
+
+
+function Entity.wound(attacker, target)
+  target.health = target.health - 10
+
+  if target.health <= 0 then
+    Entity._entities[target.name] = nil
   end
 end
 
