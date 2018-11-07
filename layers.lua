@@ -1,7 +1,7 @@
 local layers = {}
 local Layers = {}
 
-function Layers:Layers(pX,pY,pImg,pScaleX,pScaleY)
+function Layers:Layers(pX,pY,pImg,pScaleX,pScaleY,pLayer)
   self.x =pX
   self.y = pY
   self.img = pImg
@@ -9,7 +9,7 @@ function Layers:Layers(pX,pY,pImg,pScaleX,pScaleY)
   self.scaleY = pScaleY
   self.w = pImg:getWidth() * pScaleX
   self.h = pImg:getHeight() * pScaleY
-  
+  self.layer = pLayer
 end
 
 function Layers.draw(pLayers)
@@ -20,23 +20,22 @@ function Layers.draw(pLayers)
 end
 
 function Layers:Update(delta,pCamera)
-  if pCamera.x < self.x - self.w then
+  if pCamera.x < self.x-(self.w*self.layer) then
     self.x = pCamera.x
   end
-  if pCamera.x > self.x + self.w then
+  if pCamera.x > self.x + (self.w*self.layer) then
     self.x = pCamera.x
   end
-  
 end
 
 
 
-function layers.new(pX,pY,pImg,pScaleX,pScaleY)
+function layers.new(pX,pY,pImg,pScaleX,pScaleY,pLayer)
    local self = {}
     for k, v in pairs(Layers) do
       self[k] = v
     end
-    self:Layers(pX,pY,pImg,pScaleX,pScaleY)
+    self:Layers(pX,pY,pImg,pScaleX,pScaleY,pLayer)
    return self
 end
 
