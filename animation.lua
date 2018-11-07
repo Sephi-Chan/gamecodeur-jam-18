@@ -63,13 +63,9 @@ end
 
 
 function Animation.load_json(filepath)
-  local file = io.open(filepath, "rb")
-  
-  if file then
-    local content = file:read("*a") -- *a or *all reads the whole file
-    file:close()
-    return JSON.decode(content)
-  end
+  local info = love.filesystem.getInfo(filepath)
+  contents = love.filesystem.read(filepath, info.size)
+  return JSON.decode(contents)
 end
 
 
