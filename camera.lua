@@ -13,25 +13,13 @@ self.scaleY = 1
 
 self.posModifX = self.x
 self.posModifY = self.y
-
-
 self.rotation = 0
-
 self.w = 800
 self.h = 600
-
 self.objects = {}
 self:setBounds(0, 0, 800, 0)
-end
 
-function Camera:newLayer(scale)
-  self.layers[scale] = {}
-  -- table.insert(self.layers
-  --table.insert(self.layers, { draw = func, scale = scale })
-  
-  
-  
-  --table.sort(self.layers, function(a, b) return a.scale < b.scale end)
+
 end
 
 function Camera:AddToObjects(pScaleX, pRefTable)
@@ -116,18 +104,7 @@ end
 
 
 function Camera:update(delta)
-  --[[
-  if math.abs(self.x-self.objectToFollow.x)>width/3 and math.abs(self.x-self.objectToFollow.x)<width*(2/3) then
 
-  else
-    if math.abs(self.x-self.objectToFollow.x)<width/3 then
-      self.x = self.x - (math.abs(self.x-self.objectToFollow.x) *delta)
-    elseif math.abs(self.x-self.objectToFollow.x)>width/3 then
-      self.x = self.x + (math.abs(self.x-self.objectToFollow.x)*delta)
-    end
-  end
-  ]]--
-  
   self:setPosition(self.objectToFollow.x - math.floor(width / 3), self.objectToFollow.y - math.floor(height / 3))
   
 end
@@ -136,13 +113,11 @@ function Camera:Draw()
   local bx, by = self.x, self.y
 
   for _, object in pairs(self.objects) do
-    --for _,k in ipairs(v)do
       self.posModifX = bx * 1/object.scale
       self.posModifY = by * 1/object.scale
       self:set()
       object.refTable.draw(object.refTable)
       self:unset()
-    --end
   end
   
 end
