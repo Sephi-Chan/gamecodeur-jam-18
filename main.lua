@@ -40,42 +40,34 @@ function love.load()
 
   hero = Hero.new(200, 200)
   Enemy.new(300, 200, { name = "foo" })
-  
-  
-  
   local la1 = layerClass.new(0,0,layers1,0.416,0.45,6)
   local la2 = layerClass.new(0,0,layers2,0.416,0.45,5)
   local la3 = layerClass.new(0,0,layers3,0.416,0.45,4)
   local la4 = layerClass.new(0,0,layers4,0.416,0.45,3)
-  local la5 = layerClass.new(0,0,layers5,0.416,0.45,1)
+  local la5 = layerClass.new(0,0,layers5,0.416,0.45,2)
   local la6 = layerClass.new(0,0,layers6,0.416,0.45,1)
   
+  EntityManager  = {}
+  function EntityManager.draw()
+      Entity.draw(Entity.sortByY(Entity.entities()))
+  end
+  
   camera:MustFollow(hero)
-  camera:AddToObjects(1,Entity)
+  camera:AddToObjects(1,EntityManager)
   camera:AddToObjects(6,la1)
   camera:AddToObjects(5,la2)
   camera:AddToObjects(4,la3)
   camera:AddToObjects(3,la4)
-  camera:AddToObjects(1,la5)
+  camera:AddToObjects(2,la5)
   camera:AddToObjects(1,la6)
   
   listLayers = {}
   table.insert(listLayers,la1)
   table.insert(listLayers,la2)
   table.insert(listLayers,la3)
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  table.insert(listLayers,la4)
+  table.insert(listLayers,la5)
+  table.insert(listLayers,la6)
   
 end
 
@@ -84,8 +76,6 @@ function love.update(delta)
   Animation.animate_entities(Entity.entities(), delta)
   Hero.update(hero, Entity.enemies(), delta)
   camera:update(delta)
-  
-  
   for _, layer in ipairs(listLayers) do
     layer:Update(delta,camera)
   end
@@ -95,18 +85,17 @@ end
 
 
 function love.draw()
-  Entity.draw(Entity.sortByY(Entity.entities()))
+  --Entity.draw(Entity.sortByY(Entity.entities()))
   camera:Draw()
+  --Entity.draw()
 end
 
 
 function love.keypressed(key)
   if key == "escape" then
     love.event.quit()
-    
   elseif key == "space" then
     Hero.start_attack(hero)
-
   elseif key == "r" then
     love.load()
   end

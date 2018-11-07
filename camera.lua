@@ -1,6 +1,8 @@
 local camera = {}
 local Camera = {}
-
+function math.clamp(x, min, max)
+  return x < min and min or (x > max and max or x)
+end
 
 function Camera:Camera(...)
 
@@ -19,6 +21,7 @@ self.w = 800
 self.h = 600
 
 self.objects = {}
+self:setBounds(0, 0, 800, 600)
 end
 
 function Camera:newLayer(scale)
@@ -75,9 +78,34 @@ end
 
 
 function Camera:setPosition(x, y)
-  self.x = x or self.x
-  self.y = y or self.y
+  if x then self:setX(x) end
+  if y then self:setY(y) end
 end
+
+function Camera:setX(value)
+  if self._bounds then
+    self.x = math.clamp(value, self._bounds.x1, self._bounds.x2)
+  else
+    self.x = value
+  end
+end
+
+function Camera:setY(value)
+  if self._bounds then
+    self.y = math.clamp(value, self._bounds.y1, self._bounds.y2)
+  else
+    self.y = value
+  end
+end
+
+
+
+function Camera:setBounds(x1, y1, x2, y2)
+  self._bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
+end
+
+
+
 
 function Camera:setScale(sx, sy)
   self.scaleX = sx or self.scaleX
@@ -86,16 +114,19 @@ end
 
 
 function Camera:update(delta)
+  --[[
   if math.abs(self.x-self.objectToFollow.x)>width/3 and math.abs(self.x-self.objectToFollow.x)<width*(2/3) then
 
   else
-    if math.abs(self.x-self.objectToFollow.x)>width*(2/3) then
-      self.x = math.floor(self.x + (delta*math.abs(self.x-self.objectToFollow.x)/2))
-    elseif math.abs(self.x-self.objectToFollow.x)<width/3 then
-      self.x = math.floor(self.x - (delta*math.abs(self.x-self.objectToFollow.x)/2))
+    if math.abs(self.x-self.objectToFollow.x)<width/3 then
+      self.x = self.x - (math.abs(self.x-self.objectToFollow.x) *delta)
+    elseif math.abs(self.x-self.objectToFollow.x)>width/3 then
+      self.x = self.x + (math.abs(self.x-self.objectToFollow.x)*delta)
     end
   end
+  ]]--
   
+  self:setPosition(self.objectToFollow.x - math.floor(width / 3), self.objectToFollow.y - math.floor(height / 3))
   
 end
 
