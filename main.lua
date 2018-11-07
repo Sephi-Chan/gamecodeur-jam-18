@@ -9,6 +9,7 @@ Enemy     = require("enemy")
 Box       = require("box")
 Camera    = require("camera")
 Layer     = require("layers")
+Soundbox  = require("soundbox")
 
 
 function love.load()  
@@ -20,6 +21,9 @@ function love.load()
   hero   = Hero.new(400, 200)
   foo    = Enemy.new(200, 200, { name = "foo" })
   foo    = Enemy.new(600, 200, { name = "bar" })
+
+  Soundbox.register_sound("sword_hit", "sounds/hit.wav")
+  Soundbox.register_sound("sword_miss", "sounds/miss.wav")
   
   layers = {
     Layer.new(0, 0, love.graphics.newImage("images/layers/1.png"), 0.416, 0.45, 6),

@@ -19,8 +19,9 @@ function Entity.new(name, sprite, options)
     health     = options.health or 25,
     max_health = options.health or 25,
 
-    attacking      = false,
-    attack_targets = {}
+    attacking           = false,
+    attack_targets      = {},
+    attack_sound_played = false
   }
   
   return Entity._entities[name]

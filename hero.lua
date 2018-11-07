@@ -53,6 +53,7 @@ function Hero.attack(hero, enemies, delta)
   local last_frame = #hero.animations[hero.animation.name].frames
 
   if hero_frame.hitboxes then
+    local has_hit     = false
     local real_hitbox = Box.coordinates(hero, hero_frame.hitboxes[1])
 
     for _, enemy in pairs(enemies) do
@@ -62,11 +63,8 @@ function Hero.attack(hero, enemies, delta)
       if hero.attack_targets[enemy.name] then
         break -- wound an enemy only once per attack.
       
-      elseif hero.y < enemy.y - enemy_movebox.height then 
-        break -- hero is too far on the screen, only hit the targets with around the same Y.
-
-      elseif enemy.y < hero.y - enemy_movebox.height then
-        break -- hero is too near on the screen.
+      elseif hero.y < enemy.y - enemy_movebox.height or enemy.y < hero.y - enemy_movebox.height then
+        break -- only hit the targets with around the same Y: hero is either too far or too near on the screen.
 
       else
         local enemy_real_hurtbox = Box.coordinates(enemy, enemy_frame.hurtboxes[1])
@@ -74,16 +72,23 @@ function Hero.attack(hero, enemies, delta)
         if Box.collides(real_hitbox, enemy_real_hurtbox) then
           hero.attack_targets[enemy.name] = true
           Entity.wound(hero, enemy)
+          has_hit = true
         end
       end
+    end
+    
+    if hero.attack_sound_played == false then
+      if has_hit then Soundbox.play_sound("sword_hit") else Soundbox.play_sound("sword_miss") end
+      hero.attack_sound_played = true
     end
   end
   
   Animation.replace(hero, "attack1")
   
   if hero.animation.frame == last_frame then
-    hero.attacking      = false
-    hero.attack_targets = {}
+    hero.attacking           = false
+    hero.attack_targets      = {}
+    hero.attack_sound_played = false 
   end
 end
 
