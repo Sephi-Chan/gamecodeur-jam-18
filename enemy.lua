@@ -112,42 +112,5 @@ function Enemy.isCloseToHero(hero, enemy)
   end
 end
   
-  
-  
-  
-  
-function Hero.move(hero, enemies, delta)
-  if hero.attacking then return end
-  
-  hero.vy = 0
-  hero.vx = 0
-  
-  if love.keyboard.isDown("z") and not love.keyboard.isDown("s") then
-    hero.vy = -1 -- up
-  elseif love.keyboard.isDown("s") and not love.keyboard.isDown("z") then
-    hero.vy = 1 -- down
-  end
-  
-  if love.keyboard.isDown("q") and not love.keyboard.isDown("d") then
-    hero.vx = -1 -- left
-    hero.animation.flip = true
-  elseif love.keyboard.isDown("d") and not love.keyboard.isDown("q") then
-    hero.vx = 1 -- right
-    hero.animation.flip = false
-  end
-  
-  if hero.vx == 0 and hero.vy == 0 then
-    Animation.replace(hero, "idle")
-  else
-    Animation.replace(hero, "walk")
-  end
-  
-  hero.x = hero.x + hero.velocity * delta * hero.vx
-  Hero.resolve_horizontal_collision(hero, enemies)
-  
-  hero.y = hero.y + hero.velocity * delta * hero.vy
-  Hero.resolve_vertical_collision(hero, enemies)
-end
-
 
 return Enemy
