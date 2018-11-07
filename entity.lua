@@ -64,6 +64,14 @@ function Entity.asArray(entities)
 end
 
 
+function Entity.update(hero, enemies, delta)
+  Hero.update(hero, enemies, delta)
+  for _, enemy in pairs(enemies) do
+     Enemy.update(hero, enemy, delta)
+  end
+end
+
+
 function Entity.draw(entities, options)
   for _, entity in ipairs(entities) do
     local frame   = entity.animations[entity.animation.name].frames[entity.animation.frame]
@@ -106,9 +114,12 @@ end
 
 function Entity.wound(attacker, target)
   target.health = target.health - 10
-
-  if target.health <= 0 then
-    Entity._entities[target.name] = nil
+  if target.name == "Roger" then
+    
+  else
+    if target.health <= 0  then
+      Entity._entities[target.name] = nil
+    end
   end
 end
 

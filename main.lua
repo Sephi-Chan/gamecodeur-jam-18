@@ -19,6 +19,7 @@ function love.load()
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
   hero   = Hero.new(400, 200)
   foo    = Enemy.new(200, 200, { name = "foo" })
+  foo    = Enemy.new(600, 200, { name = "bar" })
   
   layers = {
     Layer.new(0, 0, love.graphics.newImage("images/layers/1.png"), 0.416, 0.45, 6),
@@ -42,7 +43,7 @@ end
 
 function love.update(delta)
   Animation.animate_entities(Entity.entities(), delta)
-  Hero.update(hero, Entity.enemies(), delta)
+  Entity.update(hero, Entity.enemies(), delta)
   Camera.update(camera, delta)
 
   for _, layer in ipairs(layers) do

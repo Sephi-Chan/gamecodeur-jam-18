@@ -135,7 +135,7 @@ end
 function Hero.new(x, y)  
   local sprite     = love.graphics.newImage("images/hero.png")
   local animations = Animation.load_json("metadata/hero.json")
-  local hero       = Entity.new("hero", sprite, { x = x, y = y, velocity = 120 })
+  local hero       = Entity.new("Roger", sprite, { x = x, y = y, velocity = 120 })
   
   for name, animation in pairs(animations) do
     Animation.attach(hero, Animation.new(hero.sprite, name, .5, animation.frames))
