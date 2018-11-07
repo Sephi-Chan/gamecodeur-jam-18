@@ -1,138 +1,70 @@
-local camera = {}
 local Camera = {}
-function math.clamp(x, min, max)
-  return x < min and min or (x > max and max or x)
-end
-
-function Camera:Camera(...)
-
-self.x = 0
-self.y = 0
-self.scaleX = 1
-self.scaleY = 1
-
-self.posModifX = self.x
-self.posModifY = self.y
-self.rotation = 0
-self.w = 800
-self.h = 600
-self.objects = {}
-self:setBounds(0, 0, 800, 0)
+local Utils = require("lib.utils")
 
 
-end
-
-function Camera:AddToObjects(pScaleX, pRefTable)
-   local object = {scale = pScaleX, refTable = pRefTable}
-  table.insert(self.objects,object)
-  table.sort(self.objects, function(a,b) return a.scale >b.scale end)
+function Camera.attach(camera, depth, layer_or_callback)
+  local object = {
+    depth    = depth,
+    layer    = type(layer_or_callback) ~= "function" and layer_or_callback or nil,
+    callback = type(layer_or_callback) == "function" and layer_or_callback or nil
+  }
+  table.insert(camera.objects, object)
+  table.sort(camera.objects, function(a, b) return a.depth > b.depth end)
 end
 
 
+function Camera.follow(camera, entity)
+  camera.followed_object = entity
+end
 
-function Camera:set()
-  love.graphics.push()
-  love.graphics.rotate(-self.rotation)
-  love.graphics.scale(1 / self.scaleX, 1 / self.scaleY)
-  love.graphics.translate(-self.posModifX, -self.posModifY)
+
+function Camera.update(camera, delta)
+  local x = camera.followed_object.x - math.floor(camera.width/3)
+  local y = camera.followed_object.y - math.floor(camera.height/3)
   
+  camera.x = Utils.clamp(x, camera.bounds.x1, camera.bounds.x2)
+  camera.y = Utils.clamp(y, camera.bounds.y1, camera.bounds.y2)
 end
 
 
+function Camera.draw(camera)
+  for _, object in pairs(camera.objects) do
+      camera.offset_x = camera.x * 1/object.depth
+      camera.offset_y = camera.y * 1/object.depth
+      
+      love.graphics.push()
+      love.graphics.translate(-camera.offset_x, - camera.offset_y)
 
-function Camera:unset()
-  love.graphics.pop()
-end
+      if object.layer then
+        Layer.draw(object.layer)
+      else
+        object.callback()
+      end
 
-function Camera:MustFollow(pObject)
-  self.objectToFollow = pObject
-end
-
-
-
-function Camera:move(dx, dy)
-  self.x = self.x + (dx or 0)
-  self.y = self.y + (dy or 0)
-end
-
-
-function Camera:rotate(dr)
-  self.rotation = self.rotation + dr
-end
-
-function Camera:scale(sx, sy)
-  sx = sx or 1
-  self.scaleX = self.scaleX * sx
-  self.scaleY = self.scaleY * (sy or sx)
-end
-
-
-function Camera:setPosition(x, y)
-  if x then self:setX(x) end
-  if y then self:setY(y) end
-end
-
-function Camera:setX(value)
-  if self._bounds then
-    self.x = math.clamp(value, self._bounds.x1, self._bounds.x2)
-  else
-    self.x = value
-  end
-end
-
-function Camera:setY(value)
-  if self._bounds then
-    self.y = math.clamp(value, self._bounds.y1, self._bounds.y2)
-  else
-    self.y = value
+      love.graphics.pop()
   end
 end
 
 
+function Camera.initialize(width, height)
+  local level_width = 800
 
-function Camera:setBounds(x1, y1, x2, y2)
-  self._bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
+  return {
+    x        = 0,
+    y        = 0,
+    offset_x = 0,
+    offset_y = 0,
+    width    = width,
+    height   = height,
+    objects  = {},
+    bounds   = {
+      x1 = 0,
+      y1 = 0,
+      x2 = level_width,
+      y2 = 0
+    }
+  }
 end
 
 
-
-
-function Camera:setScale(sx, sy)
-  self.scaleX = sx or self.scaleX
-  self.scaleY = sy or self.scaleY
-end
-
-
-function Camera:update(delta)
-
-  self:setPosition(self.objectToFollow.x - math.floor(width / 3), self.objectToFollow.y - math.floor(height / 3))
-  
-end
-
-function Camera:Draw()
-  local bx, by = self.x, self.y
-
-  for _, object in pairs(self.objects) do
-      self.posModifX = bx * 1/object.scale
-      self.posModifY = by * 1/object.scale
-      self:set()
-      object.refTable.draw(object.refTable)
-      self:unset()
-  end
-  
-end
-
-
-
-
-function camera.new(...)
-   local self = {}
-    for k, v in pairs(Camera) do
-      self[k] = v
-    end
-    self:Camera(...)
-   return self
-end
-
-
-return camera 
+return Camera 
