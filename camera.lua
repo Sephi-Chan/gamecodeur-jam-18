@@ -21,7 +21,7 @@ self.w = 800
 self.h = 600
 
 self.objects = {}
-self:setBounds(0, 0, 800, 600)
+self:setBounds(0, 0, 800, 0)
 end
 
 function Camera:newLayer(scale)
@@ -34,10 +34,10 @@ function Camera:newLayer(scale)
   --table.sort(self.layers, function(a, b) return a.scale < b.scale end)
 end
 
-function Camera:AddToObjects(pScale,pRefTable)
-   local object = {scale = pScale, refTable = pRefTable}
+function Camera:AddToObjects(pScaleX, pRefTable)
+   local object = {scale = pScaleX, refTable = pRefTable}
   table.insert(self.objects,object)
-  table.sort(self.objects, function(a,b) return a.scale>b.scale end)
+  table.sort(self.objects, function(a,b) return a.scale >b.scale end)
 end
 
 
@@ -49,6 +49,8 @@ function Camera:set()
   love.graphics.translate(-self.posModifX, -self.posModifY)
   
 end
+
+
 
 function Camera:unset()
   love.graphics.pop()
