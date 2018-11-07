@@ -14,8 +14,9 @@ self.scaleY = 1
 self.posModifX = self.x
 self.posModifY = self.y
 self.rotation = 0
-self.w = 800
-self.h = 600
+
+
+
 self.objects = {}
 self:setBounds(0, 0, 800, 0)
 
@@ -23,7 +24,7 @@ self:setBounds(0, 0, 800, 0)
 end
 
 function Camera:AddToObjects(pScaleX, pRefTable)
-   local object = {scale = pScaleX, refTable = pRefTable}
+  local object = {scale = pScaleX, refTable = pRefTable}
   table.insert(self.objects,object)
   table.sort(self.objects, function(a,b) return a.scale >b.scale end)
 end

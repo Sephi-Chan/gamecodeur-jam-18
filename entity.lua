@@ -63,6 +63,19 @@ function Entity.asArray(entities)
   return list
 end
 
+function Entity.update(hero, enemies, delta)
+  Hero.update(hero, enemies, delta)
+  for _,enemy in pairs(enemies) do
+    --enemie.update(hero,enemie,delta)
+     Enemy.update( hero,enemy, delta)
+  end
+end
+
+
+
+
+
+
 
 function Entity.draw(entities, options)
   for _, entity in ipairs(entities) do
@@ -105,10 +118,14 @@ end
 
 
 function Entity.wound(attacker, target)
+  print("La vie de "..target.name.. " est de ".. target.health)
   target.health = target.health - 10
-
-  if target.health <= 0 then
-    Entity._entities[target.name] = nil
+  if target.name == "Roger" then
+    
+  else
+    if target.health <= 0  then
+      Entity._entities[target.name] = nil
+    end
   end
 end
 

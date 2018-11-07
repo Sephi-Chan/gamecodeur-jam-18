@@ -40,6 +40,10 @@ function love.load()
 
   hero = Hero.new(200, 200)
   Enemy.new(300, 200, { name = "foo" })
+  Enemy.new(400, 400, { name = "bar" })
+  
+  
+  
   local la1 = layerClass.new(0,0,layers1,0.416,0.45,6)
   local la2 = layerClass.new(0,0,layers2,0.416,0.45,5)
   local la3 = layerClass.new(0,0,layers3,0.416,0.45,4)
@@ -74,7 +78,8 @@ end
 
 function love.update(delta)
   Animation.animate_entities(Entity.entities(), delta)
-  Hero.update(hero, Entity.enemies(), delta)
+  --Hero.update(hero, Entity.enemies(), delta)
+  Entity.update(hero, Entity.enemies(), delta)
   camera:update(delta)
   for _, layer in ipairs(listLayers) do
     layer:Update(delta,camera)
@@ -85,9 +90,8 @@ end
 
 
 function love.draw()
-  --Entity.draw(Entity.sortByY(Entity.entities()))
+
   camera:Draw()
-  --Entity.draw()
 end
 
 
