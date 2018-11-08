@@ -101,13 +101,15 @@ function Hero.resolve_horizontal_collision(hero, enemies)
   if hero.vx ~= 0 or hero.vy ~= 0 then -- if moving...
     for _, enemy in pairs(enemies) do 
       local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
-      local enemy_real_movebox = Box.coordinates(enemy, enemy_frame.moveboxes[1])
+      local enemy_movebox      = enemy_frame.moveboxes[1]
+      local enemy_real_movebox = Box.coordinates(enemy, enemy_movebox)
 
       if Box.collides(hero_real_movebox, enemy_real_movebox) then
         if hero.vx == 1 then
           hero.x = enemy_real_movebox.x - (hero_movebox.width + hero_movebox.x) - 1
         elseif hero.vx == -1 then
-          hero.x = enemy.x + hero_movebox.width + 1
+          local enemy_movebox_x2 = enemy.x + (enemy.animation.flip and -enemy_movebox.x or enemy_movebox.x + enemy_movebox.width)
+          hero.x = enemy_movebox_x2 + hero_movebox.width + hero_movebox.x + 1
         end
       end
     end
