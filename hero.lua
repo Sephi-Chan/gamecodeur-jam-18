@@ -33,11 +33,13 @@ function Hero.move(hero, enemies, delta)
     Animation.replace(hero, "walk")
   end
   
-  hero.x = hero.x + hero.velocity * delta * hero.vx
-  Hero.resolve_horizontal_collision(hero, enemies)
-  
-  hero.y = hero.y + hero.velocity * delta * hero.vy
-  Hero.resolve_vertical_collision(hero, enemies)
+  if hero.vx ~= 0 or hero.vy ~= 0 then
+    hero.x = hero.x + hero.velocity * delta * hero.vx
+    Entity.resolve_horizontal_collision(hero, enemies)
+    
+    hero.y = hero.y + hero.velocity * delta * hero.vy
+    Entity.resolve_vertical_collision(hero, enemies)
+  end
 end
 
 
@@ -89,52 +91,6 @@ function Hero.attack(hero, enemies, delta)
     hero.attacking           = false
     hero.attack_targets      = {}
     hero.attack_sound_played = false 
-  end
-end
-
-
-function Hero.resolve_horizontal_collision(hero, enemies)
-  local hero_frame        = hero.animations[hero.animation.name].frames[hero.animation.frame]
-  local hero_movebox      = hero_frame.moveboxes[1]
-  local hero_real_movebox = Box.coordinates(hero, hero_movebox)
-  
-  if hero.vx ~= 0 or hero.vy ~= 0 then -- if moving...
-    for _, enemy in pairs(enemies) do 
-      local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
-      local enemy_movebox      = enemy_frame.moveboxes[1]
-      local enemy_real_movebox = Box.coordinates(enemy, enemy_movebox)
-
-      if Box.collides(hero_real_movebox, enemy_real_movebox) then
-        if hero.vx == 1 then
-          hero.x = enemy_real_movebox.x - (hero_movebox.width + hero_movebox.x) - 1
-        elseif hero.vx == -1 then
-          local enemy_movebox_x2 = enemy.x + (enemy.animation.flip and -enemy_movebox.x or enemy_movebox.x + enemy_movebox.width)
-          hero.x = enemy_movebox_x2 + hero_movebox.width + hero_movebox.x + 1
-        end
-      end
-    end
-  end
-end
-
-
-function Hero.resolve_vertical_collision(hero, enemies)
-  local hero_frame        = hero.animations[hero.animation.name].frames[hero.animation.frame]
-  local hero_movebox      = hero_frame.moveboxes[1]
-  local hero_real_movebox = Box.coordinates(hero, hero_movebox)
-  
-  if hero.vx ~= 0 or hero.vy ~= 0 then -- if moving...
-    for _, enemy in pairs(enemies) do
-      local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
-      local enemy_real_movebox = Box.coordinates(enemy, enemy_frame.moveboxes[1])
-      
-      if Box.collides(hero_real_movebox, enemy_real_movebox) then
-        if hero.vy == 1 then
-          hero.y = enemy.y - enemy_real_movebox.height - 1
-        elseif hero.vy == -1 then
-          hero.y = enemy.y + hero_movebox.height + 1
-        end
-      end
-    end
   end
 end
 

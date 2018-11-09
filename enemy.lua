@@ -24,8 +24,8 @@ function Enemy.new(x, y, options)
   end
   
   enemy.state        = STATE.IDLE
-  enemy.aggro_radius = 150
-  enemy.attack_range = 40
+  enemy.aggro_radius = 200
+  enemy.attack_range = 50
 
   return enemy
 end
@@ -93,10 +93,16 @@ function Enemy.move(hero, enemy, delta)
   local angle = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
   local velocity_x = math.cos(angle) * enemy.velocity * delta
   local velocity_y = math.sin(angle) * enemy.velocity * delta
-
-  enemy.x = enemy.x + velocity_x 
-  enemy.y = enemy.y + velocity_y
+  
   enemy.animation.flip = velocity_x < 0
+  enemy.vx = velocity_x < 0 and -1 or 1
+  enemy.vy = velocity_y < 0 and -1 or 1
+  
+  enemy.x = enemy.x + velocity_x
+  Entity.resolve_horizontal_collision(enemy, { hero })
+
+  enemy.y = enemy.y + velocity_y
+  Entity.resolve_vertical_collision(enemy, { hero })
   
   Animation.replace(enemy, "walk")
 end

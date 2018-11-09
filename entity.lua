@@ -124,5 +124,48 @@ function Entity.wound(attacker, target)
   end
 end
 
+
+
+function Entity.resolve_horizontal_collision(entity, others)
+  local entity_frame        = entity.animations[entity.animation.name].frames[entity.animation.frame]
+  local entity_movebox      = entity_frame.moveboxes[1]
+  local entity_real_movebox = Box.coordinates(entity, entity_movebox)
+  
+  for _, other in pairs(others) do 
+    local other_frame        = other.animations[other.animation.name].frames[other.animation.frame]
+    local other_movebox      = other_frame.moveboxes[1]
+    local other_real_movebox = Box.coordinates(other, other_movebox)
+
+    if Box.collides(entity_real_movebox, other_real_movebox) then
+      if entity.vx == 1 then
+        entity.x = other_real_movebox.x - (entity_movebox.width + entity_movebox.x)
+      elseif entity.vx == -1 then
+        local other_movebox_x2 = other.x + (other.animation.flip and -other_movebox.x or other_movebox.x + other_movebox.width)
+        entity.x = other_movebox_x2 + entity_movebox.width + entity_movebox.x
+      end
+    end
+  end
+end
+
+
+function Entity.resolve_vertical_collision(entity, others)
+  local entity_frame        = entity.animations[entity.animation.name].frames[entity.animation.frame]
+  local entity_movebox      = entity_frame.moveboxes[1]
+  local entity_real_movebox = Box.coordinates(entity, entity_movebox)
+  
+  for _, other in pairs(others) do
+    local other_frame        = other.animations[other.animation.name].frames[other.animation.frame]
+    local other_real_movebox = Box.coordinates(other, other_frame.moveboxes[1])
+    
+    if Box.collides(entity_real_movebox, other_real_movebox) then
+      if entity.vy == 1 then
+        entity.y = other.y - other_real_movebox.height - 1
+      elseif entity.vy == -1 then
+        entity.y = other.y + entity_movebox.height + 1
+      end
+    end
+  end
+end
+
   
 return Entity
