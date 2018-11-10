@@ -24,6 +24,8 @@ function love.load()
 
   Soundbox.register_sound("sword_hit", "sounds/hit.wav")
   Soundbox.register_sound("sword_miss", "sounds/miss.wav")
+  Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
+  Soundbox.play_music("hilltop_asylum", 0.6)
   
   layers = {
     Layer.new(0, 0, love.graphics.newImage("images/layers/1.png"), 0.416, 0.45, 6),
