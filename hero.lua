@@ -2,14 +2,19 @@ local Hero = {}
 
 
 function Hero.update(hero, enemies, delta)
-  Hero.attack(hero, enemies, delta)
-  Hero.move(hero, enemies, delta)
+  if hero.state == Entity.states.STAGGERED then
+    Entity.staggered(hero)
+    
+  elseif hero.state == Entity.states.ATTACKING then
+    Hero.attack(hero, enemies, delta)
+    
+  elseif hero.state == Entity.states.IDLE then
+    Hero.move(hero, enemies, delta)
+  end
 end
 
 
 function Hero.move(hero, enemies, delta)
-  if hero.attacking then return end
-  
   hero.vy = 0
   hero.vx = 0
   
@@ -44,13 +49,11 @@ end
 
 
 function Hero.start_attack(hero)
-  hero.attacking = true
+  hero.state = Entity.states.ATTACKING
 end
 
 
 function Hero.attack(hero, enemies, delta)
-  if not hero.attacking then return end
-
   local hero_frame = hero.animations[hero.animation.name].frames[hero.animation.frame]
   local last_frame = #hero.animations[hero.animation.name].frames
 
@@ -73,7 +76,7 @@ function Hero.attack(hero, enemies, delta)
 
         if Box.collides(real_hitbox, enemy_real_hurtbox) then
           hero.attack_targets[enemy.name] = true
-          Entity.wound(hero, enemy)
+          hero.module.wound(hero, enemy)
           has_hit = true
         end
       end
@@ -88,7 +91,7 @@ function Hero.attack(hero, enemies, delta)
   Animation.replace(hero, "attack1")
   
   if hero.animation.frame == last_frame then
-    hero.attacking           = false
+    hero.state               = Entity.states.IDLE
     hero.attack_targets      = {}
     hero.attack_sound_played = false 
   end
@@ -98,13 +101,26 @@ end
 function Hero.new(x, y)  
   local sprite     = love.graphics.newImage("images/hero.png")
   local animations = Animation.load_json("metadata/hero.json")
-  local hero       = Entity.new("Roger", sprite, { x = x, y = y, velocity = 120 })
+  local hero       = Entity.new("Roger", sprite, {
+    x        = x,
+    y        = y,
+    velocity = 120,
+    module   = Hero
+  })
   
   for name, animation in pairs(animations) do
     Animation.attach(hero, Animation.new(hero.sprite, name, .5, animation.frames))
   end
 
   return hero
+end
+
+
+function Hero.wound(hero, enemy)
+  Entity.wound(hero, enemy)
+  if enemy.health <= 0 then
+    Entity._entities[enemy.name] = nil
+  end
 end
 
 

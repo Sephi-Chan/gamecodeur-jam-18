@@ -1,11 +1,13 @@
-local Enemy = {}
+local Enemy = {
+  states = {
+    IDLE      = "idle",
+    STAGGERED = "staggered",
+    HUNTING   = "hunting",
+    ATTACKING = "attacking"
+  }
+}
 local UUID = require("lib.uuid")
 local Utils = require("lib.utils")
-local STATE = {
-  IDLE     = "idle",
-  HUNTING  = "hunting",
-  FIGHTING = "fighting"
-}
 
 
 function Enemy.new(x, y, options)
@@ -15,15 +17,16 @@ function Enemy.new(x, y, options)
   local enemy      = Entity.new(id, sprite, {
     x        = x,
     y        = y,
+    state    = Enemy.states.IDLE,
     group    = "enemy",
-    velocity = 60
+    velocity = 60,
+    module   = Enemy
   })
     
   for name, animation in pairs(animations) do
     Animation.attach(enemy, Animation.new(enemy.sprite, name, .5, animation.frames))
   end
   
-  enemy.state        = STATE.IDLE
   enemy.aggro_radius = 200
   enemy.attack_range = 50
 
@@ -32,22 +35,25 @@ end
 
 
 
-function Enemy.update(hero, enemy,delta)
-  Enemy.think(hero, enemy)
+function Enemy.update(enemy, hero, delta)
+  Enemy.think(enemy, hero)
 
-  if enemy.state == STATE.HUNTING then
-    Enemy.move(hero, enemy, delta)
+  if enemy.state == Enemy.states.STAGGERED then
+    Entity.staggered(enemy)
 
-  elseif enemy.state == STATE.FIGHTING then
-    Enemy.attack(hero, enemy, delta)
+  elseif enemy.state == Enemy.states.HUNTING then
+    Enemy.move(enemy, hero, delta)
 
-  elseif enemy.state == STATE.IDLE then
+  elseif enemy.state == Enemy.states.ATTACKING then
+    Enemy.attack(enemy, hero, delta)
+
+  elseif enemy.state == Enemy.states.IDLE then
     Animation.replace(enemy, "idle")
   end
 end
 
   
-function Enemy.attack(hero, enemy, delta)
+function Enemy.attack(enemy, hero, delta)
   local enemy_frame = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
   local last_frame  = #enemy.animations[enemy.animation.name].frames
 
@@ -68,7 +74,7 @@ function Enemy.attack(hero, enemy, delta)
 
       if Box.collides(real_hitbox, hero_real_hurtbox) then
         enemy.attack_targets[hero.name] = true
-        Entity.wound(enemy, hero)
+        enemy.module.wound(enemy, hero)
         has_hit = true
       end
     end
@@ -82,14 +88,14 @@ function Enemy.attack(hero, enemy, delta)
   Animation.replace(enemy, "attack1")
   
   if enemy.animation.frame == last_frame then
-    enemy.attacking           = false
+    enemy.state               = Enemy.states.IDLE
     enemy.attack_targets      = {}
     enemy.attack_sound_played = false
   end
 end
 
 
-function Enemy.move(hero, enemy, delta)
+function Enemy.move(enemy, hero, delta)
   local angle = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
   local velocity_x = math.cos(angle) * enemy.velocity * delta
   local velocity_y = math.sin(angle) * enemy.velocity * delta
@@ -108,18 +114,28 @@ function Enemy.move(hero, enemy, delta)
 end
 
   
-function Enemy.think(hero, enemy)
-  local distance =  Utils.dist(hero.x, hero.y, enemy.x, enemy.y)
+function Enemy.think(enemy, hero)
+  if enemy.state == Enemy.states.STAGGERED then
+    return
 
-  if distance < enemy.aggro_radius then
-    enemy.state = STATE.HUNTING
-
-    if distance < enemy.attack_range then
-      enemy.state = STATE.FIGHTING
-    end
   else
-    enemy.state = STATE.IDLE
+    local distance =  Utils.dist(hero.x, hero.y, enemy.x, enemy.y)
+
+    if distance < enemy.aggro_radius then
+      enemy.state = Enemy.states.HUNTING
+
+      if distance < enemy.attack_range then
+        enemy.state = Enemy.states.ATTACKING
+      end
+    else
+      enemy.state = Enemy.states.IDLE
+    end
   end
+end
+
+
+function Enemy.wound(enemy, hero)
+  Entity.wound(enemy, hero)
 end
   
 

@@ -1,7 +1,13 @@
 local Entity = {
   _entities = {},
   _default_draw_options = {
-    draw_boxes = true
+    draw_boxes  = true,
+    print_state = true
+  },
+  states = {
+    IDLE      = "idle",
+    ATTACKING = "attacking",
+    STAGGERED = "staggered"
   }
 }
 
@@ -10,6 +16,7 @@ function Entity.new(name, sprite, options)
   Entity._entities[name] = {
     name       = name,
     sprite     = sprite,
+    state      = options.state or Entity.states.IDLE,
     x          = options.x or 0,
     y          = options.y or 0,
     vx         = options.vx or 0,
@@ -18,8 +25,8 @@ function Entity.new(name, sprite, options)
     group      = options.group,
     health     = options.health or 25,
     max_health = options.health or 25,
+    module     = options.module or Entity,
 
-    attacking           = false,
     attack_targets      = {},
     attack_sound_played = false
   }
@@ -68,7 +75,7 @@ end
 function Entity.update(hero, enemies, delta)
   Hero.update(hero, enemies, delta)
   for _, enemy in pairs(enemies) do
-     Enemy.update(hero, enemy, delta)
+     Enemy.update(enemy, hero, delta)
   end
 end
 
@@ -84,9 +91,13 @@ function Entity.draw(entities, options)
       love.graphics.setColor(1, 1, 1)
     end
     love.graphics.draw(entity.sprite, frame.image, entity.x, entity.y, 0, scale_x, 1, frame.origin.x, frame.origin.y)
-
+  
+    if (options or Entity._default_draw_options).print_state then
+      love.graphics.print(entity.state, entity.x, entity.y)
+      love.graphics.print(entity.animation.name .. " " .. entity.animation.frame .. "/" .. #entity.animations[entity.animation.name].frames, entity.x, entity.y + 15)
+    end
+    
     if (options or Entity._default_draw_options).draw_boxes then
-      love.graphics.print(entity.animation.frame, entity.x, entity.y)
       love.graphics.setColor(1, 0, 0, .7)
       love.graphics.circle("line", entity.x, entity.y, 1)
       
@@ -111,19 +122,6 @@ function Entity.draw(entities, options)
   end
    love.graphics.setColor(1, 1, 1)
 end
-
-
-function Entity.wound(attacker, target)
-  target.health = target.health - 10
-  if target.name == "Roger" then
-    
-  else
-    if target.health <= 0  then
-      Entity._entities[target.name] = nil
-    end
-  end
-end
-
 
 
 function Entity.resolve_horizontal_collision(entity, others)
@@ -164,6 +162,22 @@ function Entity.resolve_vertical_collision(entity, others)
         entity.y = other.y + entity_movebox.height + 1
       end
     end
+  end
+end
+
+
+function Entity.wound(attacker, target)
+  target.health = target.health - 10
+  target.state = Entity.states.STAGGERED
+end
+
+
+function Entity.staggered(entity)
+  local last_frame = #entity.animations["staggered"].frames
+  Animation.replace(entity, "staggered")
+  
+  if entity.animation.frame == last_frame then
+    entity.state = Entity.states.IDLE
   end
 end
 
