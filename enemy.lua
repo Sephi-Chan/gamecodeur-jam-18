@@ -1,9 +1,10 @@
 local Enemy = {
   states = {
-    IDLE      = "idle",
-    STAGGERED = "staggered",
-    HUNTING   = "hunting",
-    ATTACKING = "attacking"
+    IDLE       = "idle",
+    STAGGERED  = "staggered",
+    HUNTING    = "hunting",
+    ATTACKING  = "attacking",
+    RECOVERING = "recovering",
   }
 }
 local UUID = require("lib.uuid")
@@ -40,6 +41,9 @@ function Enemy.update(enemy, hero, delta)
 
   if enemy.state == Enemy.states.STAGGERED then
     Entity.staggered(enemy)
+    
+  elseif enemy.state == Enemy.states.RECOVERING then
+    Enemy.recover(enemy)
 
   elseif enemy.state == Enemy.states.HUNTING then
     Enemy.move(enemy, hero, delta)
@@ -74,13 +78,16 @@ function Enemy.attack(enemy, hero, delta)
 
       if Box.collides(real_hitbox, hero_real_hurtbox) then
         enemy.attack_targets[hero.name] = true
-        enemy.module.wound(enemy, hero)
+        Enemy.wound(enemy, hero)
         has_hit = true
+      else
+        foo()
       end
     end
     
     if enemy.attack_sound_played == false then
-      if has_hit then Soundbox.play_sound("sword_hit") else Soundbox.play_sound("sword_miss") end
+      local sound = has_hit and "sword_hit" or "sword_miss"
+      Soundbox.play_sound(sound)
       enemy.attack_sound_played = true
     end
   end
@@ -88,7 +95,7 @@ function Enemy.attack(enemy, hero, delta)
   Animation.replace(enemy, "attack1")
   
   if enemy.animation.frame == last_frame then
-    enemy.state               = Enemy.states.IDLE
+    Enemy.start_recovering(enemy)
     enemy.attack_targets      = {}
     enemy.attack_sound_played = false
   end
@@ -113,10 +120,30 @@ function Enemy.move(enemy, hero, delta)
   Animation.replace(enemy, "walk")
 end
 
+function Enemy.start_recovering(enemy)
+  enemy.state             = Enemy.states.RECOVERING
+  enemy.recovering_frames = 50
+end
+
+
+function Enemy.recover(enemy)
+  Animation.replace(enemy, "idle")
+
+  enemy.recovering_frames = enemy.recovering_frames - 1
+  
+  if enemy.recovering_frames == 0 then
+    enemy.recovering_frames = nil
+    enemy.state             = Enemy.states.IDLE
+  end
+end
+
   
 function Enemy.think(enemy, hero)
   if enemy.state == Enemy.states.STAGGERED then
     return
+
+  elseif enemy.state == Enemy.states.RECOVERING then
+    return 
 
   else
     local distance =  Utils.dist(hero.x, hero.y, enemy.x, enemy.y)

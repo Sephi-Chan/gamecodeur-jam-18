@@ -104,7 +104,7 @@ function Hero.new(x, y)
   local hero       = Entity.new("Roger", sprite, {
     x        = x,
     y        = y,
-    velocity = 120,
+    velocity = 220,
     module   = Hero
   })
   
@@ -120,6 +120,8 @@ function Hero.wound(hero, enemy)
   Entity.wound(hero, enemy)
   if enemy.health <= 0 then
     Entity._entities[enemy.name] = nil
+  else
+    Enemy.start_recovering(enemy)
   end
 end
 
