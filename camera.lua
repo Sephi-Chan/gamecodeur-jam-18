@@ -18,6 +18,11 @@ function Camera.follow(camera, entity)
 end
 
 
+function Camera.bind(camera, level)
+  camera.bounds.x2 = level.width
+end
+
+
 function Camera.update(camera, delta)
   local x = camera.followed_object.x - math.floor(camera.width/3)
   local y = camera.followed_object.y - math.floor(camera.height/3)
@@ -47,8 +52,6 @@ end
 
 
 function Camera.initialize(width, height)
-  local level_width = 800
-
   return {
     x        = 0,
     y        = 0,
@@ -60,7 +63,7 @@ function Camera.initialize(width, height)
     bounds   = {
       x1 = 0,
       y1 = 0,
-      x2 = level_width,
+      x2 = 0,
       y2 = 0
     }
   }

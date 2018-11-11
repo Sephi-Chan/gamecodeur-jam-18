@@ -1,7 +1,8 @@
 local Hero = {}
+local Utils = require("lib.utils")
 
 
-function Hero.update(hero, enemies, delta)
+function Hero.update(hero, enemies, level, delta)
   if hero.state == Entity.states.STAGGERED then
     Entity.staggered(hero)
     
@@ -9,12 +10,12 @@ function Hero.update(hero, enemies, delta)
     Hero.attack(hero, enemies, delta)
     
   elseif hero.state == Entity.states.IDLE then
-    Hero.move(hero, enemies, delta)
+    Hero.move(hero, enemies, level, delta)
   end
 end
 
 
-function Hero.move(hero, enemies, delta)
+function Hero.move(hero, enemies, level, delta)
   hero.vy = 0
   hero.vx = 0
   
@@ -39,10 +40,11 @@ function Hero.move(hero, enemies, delta)
   end
   
   if hero.vx ~= 0 or hero.vy ~= 0 then
-    hero.x = hero.x + hero.velocity * delta * hero.vx
+    hero.x = hero.x + (hero.velocity_x * delta * hero.vx)
+    hero.x = Utils.clamp(hero.x, 50, level.width - 50)
     Entity.resolve_horizontal_collision(hero, enemies)
     
-    hero.y = hero.y + hero.velocity * .6 * delta * hero.vy
+    hero.y = Utils.clamp(hero.y + (hero.velocity_y * delta * hero.vy), 380, 530)
     Entity.resolve_vertical_collision(hero, enemies)
   end
 end
@@ -83,7 +85,8 @@ function Hero.attack(hero, enemies, delta)
     end
     
     if hero.attack_sound_played == false then
-      if has_hit then Soundbox.play_sound("sword_hit") else Soundbox.play_sound("sword_miss") end
+      local sound = has_hit and "sword_hit" or "sword_miss"
+      Soundbox.play_sound(sound, .5)
       hero.attack_sound_played = true
     end
   end
@@ -102,10 +105,11 @@ function Hero.new(x, y)
   local sprite     = love.graphics.newImage("images/hero.png")
   local animations = Animation.load_json("metadata/hero.json")
   local hero       = Entity.new("Roger", sprite, {
-    x        = x,
-    y        = y,
-    velocity = 220,
-    module   = Hero
+    x          = x,
+    y          = y,
+    velocity_x = 220,
+    velocity_y = 130,
+    module     = Hero
   })
   
   for name, animation in pairs(animations) do

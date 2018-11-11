@@ -8,27 +8,31 @@ function Layer.draw(layer)
 end
 
 
+
 function Layer.update(layer, camera, delta)
-  if  camera.x < layer.x - (layer.width * layer.depth) then
-    layer.x = camera.x
+  if camera.x/layer.repetition_factor < (layer.x-layer.width) then
+    layer.x = camera.x / layer.repetition_factor
   end
-  if  camera.x > layer.x + (layer.width * layer.depth) then
-    layer.x = camera.x
+
+  if camera.x/layer.repetition_factor > layer.x + (layer.width) then  
+    layer.x = camera.x/layer.repetition_factor
   end
 end
 
 
-function Layer.new(x, y, image, scale_x, scale_y, depth)
-   return {
-    x       = x,
-    y       = y,
-    img     = image,
-    scale_x = scale_x,
-    scale_y = scale_y,
-    width   = image:getWidth() * scale_x,
-    height  = image:getHeight() * scale_y,
-    depth   = depth
-   }
+function Layer.new(image, repetition_factor, options)
+  local options = options or {}
+
+  return {
+    img               = image,
+    repetition_factor = repetition_factor,
+    x                 = options.x or 0,
+    y                 = options.y or 0,
+    scale_x           = options.scale_x or 1,
+    scale_y           = options.scale_y or 1,
+    width             = image:getWidth() * (options.scale_x or 1),
+    height            = image:getHeight() * (options.scale_y or 1)
+  }
 end
 
 

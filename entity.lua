@@ -1,8 +1,8 @@
 local Entity = {
   _entities = {},
   _default_draw_options = {
-    draw_boxes  = true,
-    print_state = true
+    draw_boxes  = false,
+    print_state = false
   },
   states = {
     IDLE      = "idle",
@@ -21,7 +21,8 @@ function Entity.new(name, sprite, options)
     y          = options.y or 0,
     vx         = options.vx or 0,
     vy         = options.vy or 0,
-    velocity   = options.velocity or 160,
+    velocity_x = options.velocity_x or 160,
+    velocity_y = options.velocity_y or 160 * 0.6,
     group      = options.group,
     health     = options.health or 25,
     max_health = options.health or 25,
@@ -72,8 +73,8 @@ function Entity.asArray(entities)
 end
 
 
-function Entity.update(hero, enemies, delta)
-  Hero.update(hero, enemies, delta)
+function Entity.update(hero, enemies, level, delta)
+  Hero.update(hero, enemies, level, delta)
   for _, enemy in pairs(enemies) do
      Enemy.update(enemy, hero, delta)
   end

@@ -10,6 +10,7 @@ Box       = require("box")
 Camera    = require("camera")
 Layer     = require("layers")
 Soundbox  = require("soundbox")
+Level     = require("level")
 
 
 function love.load()  
@@ -18,41 +19,25 @@ function love.load()
   love.graphics.setLineWidth(1)
 
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
-  hero   = Hero.new(400, 200)
-  foo    = Enemy.new(200, 200, { name = "foo" })
-  foo    = Enemy.new(600, 200, { name = "bar" })
+  hero   = Hero.new(250, 450)
+  foo    = Enemy.new(900, 500, { name = "foo" })
+  bar    = Enemy.new(500, 400, { name = "bar" })
 
   Soundbox.register_sound("sword_hit", "sounds/hit.wav")
   Soundbox.register_sound("sword_miss", "sounds/miss.wav")
   Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
   Soundbox.play_music("hilltop_asylum", 0.6)
   
-  layers = {
-    Layer.new(0, 0, love.graphics.newImage("images/layers/1.png"), 0.416, 0.45, 6),
-    Layer.new(0, 0, love.graphics.newImage("images/layers/2.png"), 0.416, 0.45, 5),
-    Layer.new(0, 0, love.graphics.newImage("images/layers/3.png"), 0.416, 0.45, 4),
-    Layer.new(0, 0, love.graphics.newImage("images/layers/4.png"), 0.416, 0.45, 3),
-    Layer.new(0, 0, love.graphics.newImage("images/layers/5.png"), 0.416, 0.45, 2),
-    Layer.new(0, 0, love.graphics.newImage("images/layers/6.png"), 0.416, 0.45, 1)
-  }
-  
-  Camera.follow(camera, hero)
-  Camera.attach(camera, 1, function() Entity.draw(Entity.sortByY(Entity.entities())) end)
-  Camera.attach(camera, 5, layers[2])
-  Camera.attach(camera, 4, layers[3])
-  Camera.attach(camera, 3, layers[4])
-  Camera.attach(camera, 2, layers[5])
-  Camera.attach(camera, 6, layers[1])
-  Camera.attach(camera, 1, layers[6])
+  level = Level.one(camera, hero)
 end
 
 
 function love.update(delta)
   Animation.animate_entities(Entity.entities(), delta)
-  Entity.update(hero, Entity.enemies(), delta)
+  Entity.update(hero, Entity.enemies(), level, delta)
   Camera.update(camera, delta)
 
-  for _, layer in ipairs(layers) do
+  for _, layer in ipairs(level.layers) do
     Layer.update(layer, camera, delta)
   end
 end

@@ -16,12 +16,13 @@ function Enemy.new(x, y, options)
   local animations = Animation.load_json("metadata/hero.json")
   local id         = options.name or UUID.uuid("enemy")
   local enemy      = Entity.new(id, sprite, {
-    x        = x,
-    y        = y,
-    state    = Enemy.states.IDLE,
-    group    = "enemy",
-    velocity = 60,
-    module   = Enemy
+    x          = x,
+    y          = y,
+    state      = Enemy.states.IDLE,
+    group      = "enemy",
+    velocity_x = 120,
+    velocity_y = 120 * 0.6,
+    module     = Enemy
   })
     
   for name, animation in pairs(animations) do
@@ -87,7 +88,7 @@ function Enemy.attack(enemy, hero, delta)
     
     if enemy.attack_sound_played == false then
       local sound = has_hit and "sword_hit" or "sword_miss"
-      Soundbox.play_sound(sound)
+      Soundbox.play_sound(sound, .5)
       enemy.attack_sound_played = true
     end
   end
@@ -104,8 +105,8 @@ end
 
 function Enemy.move(enemy, hero, delta)
   local angle = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
-  local velocity_x = math.cos(angle) * enemy.velocity * delta
-  local velocity_y = math.sin(angle) * enemy.velocity * delta
+  local velocity_x = math.cos(angle) * enemy.velocity_x * delta
+  local velocity_y = math.sin(angle) * enemy.velocity_y * delta
   
   enemy.animation.flip = velocity_x < 0
   enemy.vx = velocity_x < 0 and -1 or 1
