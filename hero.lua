@@ -42,7 +42,7 @@ function Hero.move(hero, enemies, delta)
     hero.x = hero.x + hero.velocity * delta * hero.vx
     Entity.resolve_horizontal_collision(hero, enemies)
     
-    hero.y = hero.y + hero.velocity * delta * hero.vy
+    hero.y = hero.y + hero.velocity * .6 * delta * hero.vy
     Entity.resolve_vertical_collision(hero, enemies)
   end
 end
