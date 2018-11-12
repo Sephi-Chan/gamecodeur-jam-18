@@ -11,6 +11,7 @@ Camera    = require("camera")
 Layer     = require("layers")
 Soundbox  = require("soundbox")
 Level     = require("level")
+UI        = require("ui")
 
 
 function love.load()  
@@ -33,8 +34,10 @@ end
 
 
 function love.update(delta)
+  enemies = Entity.enemies()
+
   Animation.animate_entities(Entity.entities(), delta)
-  Entity.update(hero, Entity.enemies(), level, delta)
+  Entity.update(hero, enemies, level, delta)
   Camera.update(camera, delta)
 
   for _, layer in ipairs(level.layers) do
@@ -45,6 +48,7 @@ end
 
 function love.draw()
   Camera.draw(camera)
+  UI.draw(hero, enemies)
 end
 
 

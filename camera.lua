@@ -26,27 +26,29 @@ end
 function Camera.update(camera, delta)
   local x = camera.followed_object.x - math.floor(camera.width/3)
   local y = camera.followed_object.y - math.floor(camera.height/3)
-  
+
   camera.x = Utils.clamp(x, camera.bounds.x1, camera.bounds.x2)
   camera.y = Utils.clamp(y, camera.bounds.y1, camera.bounds.y2)
 end
 
 
 function Camera.draw(camera)
+  love.graphics.setColor(1, 1, 1)
+
   for _, object in pairs(camera.objects) do
-      camera.offset_x = camera.x * 1/object.depth
-      camera.offset_y = camera.y * 1/object.depth
-      
-      love.graphics.push()
-      love.graphics.translate(-camera.offset_x, - camera.offset_y)
+    camera.offset_x = camera.x * 1/object.depth
+    camera.offset_y = camera.y * 1/object.depth
 
-      if object.layer then
-        Layer.draw(object.layer)
-      else
-        object.callback()
-      end
+    love.graphics.push()
+    love.graphics.translate(-camera.offset_x, - camera.offset_y)
 
-      love.graphics.pop()
+    if object.layer then
+      Layer.draw(object.layer)
+    else
+      object.callback()
+    end
+
+    love.graphics.pop()
   end
 end
 
@@ -70,4 +72,4 @@ function Camera.initialize(width, height)
 end
 
 
-return Camera 
+return Camera
