@@ -2,15 +2,15 @@ local Hero = {}
 local Utils = require("lib.utils")
 
 
-function Hero.update(hero, enemies, level, delta)
+function Hero.update(hero, level, delta)
   if hero.state == Entity.states.STAGGERED then
     Entity.staggered(hero)
 
   elseif hero.state == Entity.states.ATTACKING then
-    Hero.attack(hero, enemies, delta)
+    Hero.attack(hero, level.enemies, delta)
 
   elseif hero.state == Entity.states.IDLE then
-    Hero.move(hero, enemies, level, delta)
+    Hero.move(hero, level.enemies, level, delta)
   end
 end
 
@@ -129,8 +129,7 @@ function Hero.wound(hero, enemy, level)
 
   if enemy.health <= 0 then
     hero.fury = Utils.clamp(hero.fury + 15, 0, hero.max_fury)
-    Enemy.die(enemy)
-    Level.check_victory_conditions(level, Entity.enemies())
+    Level.remove_enemy(level, enemy)
 
   else
     hero.fury = Utils.clamp(hero.fury + 5, 0, hero.max_fury)

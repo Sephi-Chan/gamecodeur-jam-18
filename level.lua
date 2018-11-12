@@ -24,10 +24,10 @@ end
 
 
 
-function Level.check_victory_conditions(level, enemies)
+function Level.check_victory_conditions(level)
   local next_wave, trigger_x, trigger = Level.next_wave(level)
-  if Utils.count(enemies) == 0 and next_wave == nil then
-    Level.victory(level)
+  if Utils.count(level.enemies) == 0 and next_wave == nil then
+    victory()
   end
 end
 
@@ -37,18 +37,21 @@ function Level.spawn_wave(level, wave, camera)
     local y = math.random(level.min_y, level.max_y)
 
     if spawn.side == LEFT then
-      Enemy.new(camera.x + math.random(100, 150), y)
+      local enemy = Enemy.new(camera.x + math.random(100, 150), y)
+      level.enemies[enemy.name] = enemy
 
     else
       local enemy = Enemy.new(camera.x + camera.width - math.random(100, 150), y)
       enemy.animation.flip = true
+      level.enemies[enemy.name] = enemy
     end
   end
 end
 
 
-function Level.victory(level)
-  victory()
+function Level.remove_enemy(level, enemy)
+  level.enemies[enemy.name] = nil
+  Level.check_victory_conditions(level)
 end
 
 
@@ -93,6 +96,8 @@ function Level.one(camera, hero)
       min_y  = 380,
       max_y  = 530,
 
+      enemies = {},
+
       last_triggered_trigger = nil,
       wave_triggers          = wave_triggers,
       waves                  = waves,
@@ -120,7 +125,7 @@ function Level.one(camera, hero)
     Camera.attach(camera, 5, background_trees)
     Camera.attach(camera, 4, background_herbs)
     Camera.attach(camera, 3, front_trees)
-    Camera.attach(camera, 1, function() Entity.draw(Entity.sortByY(Entity.entities())) end)
+    Camera.attach(camera, 1, function() Entity.draw(Entity.sortByY(hero, level.enemies)) end)
     Camera.attach(camera, 1, road)
     Camera.attach(camera, 1, front_herbs)
 

@@ -175,9 +175,4 @@ function Enemy.wound(enemy, hero, level)
 end
 
 
-function Enemy.die(enemy)
-  Entity._entities[enemy.name] = nil
-end
-
-
 return Enemy

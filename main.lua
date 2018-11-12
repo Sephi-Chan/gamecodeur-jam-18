@@ -33,10 +33,9 @@ end
 
 
 function love.update(delta)
-  enemies = Entity.enemies()
-
-  Animation.animate_entities(Entity.entities(), delta)
-  Entity.update(hero, enemies, level, delta)
+  Animation.animate_entities(level.enemies, delta)
+  Animation.animate_entities({ hero }, delta)
+  Entity.update(hero, level, delta)
   Level.trigger_waves(level, hero, camera)
   Camera.update(camera, delta)
 
@@ -48,7 +47,7 @@ end
 
 function love.draw()
   Camera.draw(camera)
-  UI.draw(hero, enemies)
+  UI.draw(hero, level.enemies)
 end
 
 

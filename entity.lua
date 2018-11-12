@@ -1,6 +1,5 @@
 local Entity = {
-  _entities = {},
-  _default_draw_options = {
+  default_draw_options = {
     draw_boxes  = false,
     print_state = false
   },
@@ -13,7 +12,7 @@ local Entity = {
 
 
 function Entity.new(name, sprite, options)
-  Entity._entities[name] = {
+  return {
     name       = name,
     sprite     = sprite,
     state      = options.state or Entity.states.IDLE,
@@ -31,34 +30,12 @@ function Entity.new(name, sprite, options)
     attack_targets      = {},
     attack_sound_played = false
   }
-
-  return Entity._entities[name]
 end
 
 
-function Entity.entities()
-  return Entity._entities
-end
-
-
-function Entity.enemies()
-  local enemies = {}
-  for name, entity in pairs(Entity._entities) do
-    if entity.group == "enemy" then
-      enemies[name] = entity
-    end
-  end
-  return enemies
-end
-
-
-function Entity.get(name)
-  return Entity._entities[name]
-end
-
-
-function Entity.sortByY(entities)
-  local list = Entity.asArray(entities)
+function Entity.sortByY(hero, enemies)
+  local list = Entity.asArray(enemies)
+  table.insert(list, hero)
   table.sort(list, function(a, b) return a.y < b.y end)
   return list
 end
@@ -73,10 +50,10 @@ function Entity.asArray(entities)
 end
 
 
-function Entity.update(hero, enemies, level, delta)
-  Hero.update(hero, enemies, level, delta)
-  for _, enemy in pairs(enemies) do
-     Enemy.update(enemy, hero, delta)
+function Entity.update(hero, level, delta)
+  Hero.update(hero, level, delta)
+  for _, enemy in pairs(level.enemies) do
+    Enemy.update(enemy, hero, delta)
   end
 end
 
@@ -93,12 +70,12 @@ function Entity.draw(entities, options)
     end
     love.graphics.draw(entity.sprite, frame.image, entity.x, entity.y, 0, scale_x, 1, frame.origin.x, frame.origin.y)
 
-    if (options or Entity._default_draw_options).print_state then
+    if (options or Entity.default_draw_options).print_state then
       love.graphics.print(entity.state, entity.x, entity.y)
       love.graphics.print(entity.animation.name .. " " .. entity.animation.frame .. "/" .. #entity.animations[entity.animation.name].frames, entity.x, entity.y + 15)
     end
 
-    if (options or Entity._default_draw_options).draw_boxes then
+    if (options or Entity.default_draw_options).draw_boxes then
       love.graphics.setColor(1, 0, 0, .7)
       love.graphics.circle("line", entity.x, entity.y, 1)
 
