@@ -13,7 +13,7 @@ function Animation.new(sprite, name, frame_duration, frames)
       moveboxes = frame.moveboxes
     }
   end
-  
+
   return {
     name     = name,
     duration = frame_duration,
@@ -32,25 +32,34 @@ function Animation.replace(entity, animation_name)
 end
 
 
-
-function Animation.animate_entities(entities, delta)
-  for _, entity in pairs(entities) do
-    entity.animation.timer = entity.animation.timer + delta
-    local duration = entity.animations[entity.animation.name].duration
-    
-    if entity.animation.timer >= duration then
-      entity.animation.timer = entity.animation.timer - duration
-    end
-    
-    entity.animation.frame = math.floor(entity.animation.timer / duration * #entity.animations[entity.animation.name].frames) + 1
+function Animation.animate_entities(enemies, hero, delta)
+  animate_entity(hero, hero, delta)
+  for _, enemy in pairs(enemies) do
+    animate_entity(enemy, hero, delta)
   end
 end
 
 
+function animate_entity(entity, hero, delta)
+  entity.animation.timer = entity.animation.timer + delta
+  local duration = entity.animations[entity.animation.name].duration
+
+  if hero.bullet_time and entity.group == Enemy.GROUP then
+    duration = Enemy.BULLET_TIME_FRAME_DURATION
+  end
+
+  if entity.animation.timer >= duration then
+    entity.animation.timer = entity.animation.timer - duration
+  end
+
+  entity.animation.frame = math.floor(entity.animation.timer / duration * #entity.animations[entity.animation.name].frames) + 1
+end
+
+
 function Animation.attach(entity, animation)
-  entity.animations = entity.animations or {}  
+  entity.animations = entity.animations or {}
   entity.animations[animation.name] = animation
-  
+
   if entity.animation == nil then
     entity.animation = {
       name  = animation.name,

@@ -60,7 +60,8 @@ end
 
 function Entity.draw(entities, options)
   for _, entity in ipairs(entities) do
-    local frame   = entity.animations[entity.animation.name].frames[entity.animation.frame]
+    local frames  = entity.animations[entity.animation.name].frames
+    local frame   = frames[entity.animation.frame] or frames[1]
     local scale_x = entity.animation.flip and -1 or 1
 
     if entity.group == "enemy" then
@@ -72,7 +73,7 @@ function Entity.draw(entities, options)
 
     if (options or Entity.default_draw_options).print_state then
       love.graphics.print(entity.state, entity.x, entity.y)
-      love.graphics.print(entity.animation.name .. " " .. entity.animation.frame .. "/" .. #entity.animations[entity.animation.name].frames, entity.x, entity.y + 15)
+      love.graphics.print(entity.animation.name .. " " .. entity.animation.frame .. "/" .. #frames, entity.x, entity.y + 15)
     end
 
     if (options or Entity.default_draw_options).draw_boxes then

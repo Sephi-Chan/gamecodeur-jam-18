@@ -1,4 +1,9 @@
 local Enemy = {
+  GROUP                       = "enemy",
+  VELOCITY                    = 120,
+  FRAME_DURATION              = 0.5,
+  BULLET_TIME_VELOCITY_FACTOR = 0.25,
+  BULLET_TIME_FRAME_DURATION  = 1.5,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
@@ -23,14 +28,14 @@ function Enemy.new(x, y, options)
     x          = x,
     y          = y,
     state      = Enemy.states.IDLE,
-    group      = "enemy",
-    velocity_x = 120,
-    velocity_y = 120 * 0.6,
+    group      = Enemy.GROUP,
+    velocity_x = Enemy.VELOCITY,
+    velocity_y = Enemy.VELOCITY * 0.6,
     module     = Enemy
   })
 
   for name, animation in pairs(animations) do
-    Animation.attach(enemy, Animation.new(enemy.sprite, name, .5, animation.frames))
+    Animation.attach(enemy, Animation.new(enemy.sprite, name, Enemy.FRAME_DURATION, animation.frames))
   end
 
   enemy.aggro_radius = 200
@@ -108,9 +113,10 @@ end
 
 
 function Enemy.move(enemy, hero, delta)
-  local angle = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
-  local velocity_x = math.cos(angle) * enemy.velocity_x * delta
-  local velocity_y = math.sin(angle) * enemy.velocity_y * delta
+  local angle  = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
+  local factor = hero.bullet_time and Enemy.BULLET_TIME_VELOCITY_FACTOR or 1
+  local velocity_x = math.cos(angle) * enemy.velocity_x * factor * delta
+  local velocity_y = math.sin(angle) * enemy.velocity_y * factor * delta
 
   enemy.animation.flip = velocity_x < 0
   enemy.vx = velocity_x < 0 and -1 or 1

@@ -33,8 +33,7 @@ end
 
 
 function love.update(delta)
-  Animation.animate_entities(level.enemies, delta)
-  Animation.animate_entities({ hero }, delta)
+  Animation.animate_entities(level.enemies, hero, delta)
   Entity.update(hero, level, delta)
   Level.trigger_waves(level, hero, camera)
   Camera.update(camera, delta)
@@ -58,7 +57,10 @@ function love.keypressed(key)
   elseif key == "space" then
     Hero.start_attack(hero)
 
-  elseif key == "r" then
-    love.load()
+  elseif key == "b" then
+    Hero.use_bullet_time_power(hero, level)
+
+  elseif key == "h" then
+    Hero.use_heal_power(hero)
   end
 end

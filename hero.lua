@@ -1,8 +1,12 @@
-local Hero = {}
+local Hero = {
+  BULLET_TIME_DURATION = 5
+}
 local Utils = require("lib.utils")
 
 
 function Hero.update(hero, level, delta)
+  Hero.update_bullet_time_timer(hero, delta)
+
   if hero.state == Entity.states.STAGGERED then
     Entity.staggered(hero)
 
@@ -113,11 +117,11 @@ function Hero.new(x, y)
     module     = Hero
   })
 
-  hero.fury     = 0
+  hero.fury     = 100
   hero.max_fury = 100
 
   for name, animation in pairs(animations) do
-    Animation.attach(hero, Animation.new(hero.sprite, name, .5, animation.frames))
+    Animation.attach(hero, Animation.new(hero.sprite, name, 0.5, animation.frames))
   end
 
   return hero
@@ -136,6 +140,35 @@ function Hero.wound(hero, enemy, level)
     Enemy.start_recovering(enemy)
   end
 end
+
+
+function Hero.use_heal_power(hero)
+  if hero.fury == hero.max_fury and hero.health < hero.max_health then
+    hero.fury   = 0
+    hero.health = Utils.clamp(hero.health + 50, 10, hero.max_health)
+  end
+end
+
+
+function Hero.use_bullet_time_power(hero, level)
+  if hero.fury == hero.max_fury then
+    hero.fury              = 0
+    hero.bullet_time       = true
+    hero.bullet_time_timer = Hero.BULLET_TIME_DURATION
+  end
+end
+
+
+function Hero.update_bullet_time_timer(hero, delta)
+  if hero.bullet_time then
+    hero.bullet_time_timer = hero.bullet_time_timer - delta
+
+    if hero.bullet_time_timer <= 0 then
+      hero.bullet_time = false
+    end
+  end
+end
+
 
 
 return Hero
