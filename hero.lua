@@ -44,7 +44,7 @@ function Hero.move(hero, enemies, level, delta)
     hero.x = Utils.clamp(hero.x, 50, level.width - 50)
     Entity.resolve_horizontal_collision(hero, enemies)
 
-    hero.y = Utils.clamp(hero.y + (hero.velocity_y * delta * hero.vy), 380, 530)
+    hero.y = Utils.clamp(hero.y + (hero.velocity_y * delta * hero.vy), level.min_y, level.max_y)
     Entity.resolve_vertical_collision(hero, enemies)
   end
 end

@@ -10,10 +10,14 @@ local Enemy = {
 local UUID = require("lib.uuid")
 local Utils = require("lib.utils")
 
+local hero_sprite     = love.graphics.newImage("images/hero.png")
+local hero_animations = Animation.load_json("metadata/hero.json")
+
 
 function Enemy.new(x, y, options)
-  local sprite     = love.graphics.newImage("images/hero.png")
-  local animations = Animation.load_json("metadata/hero.json")
+  local options    = options or {}
+  local sprite     = hero_sprite
+  local animations = hero_animations
   local id         = options.name or UUID.uuid("enemy")
   local enemy      = Entity.new(id, sprite, {
     x          = x,
@@ -24,11 +28,11 @@ function Enemy.new(x, y, options)
     velocity_y = 120 * 0.6,
     module     = Enemy
   })
-    
+
   for name, animation in pairs(animations) do
     Animation.attach(enemy, Animation.new(enemy.sprite, name, .5, animation.frames))
   end
-  
+
   enemy.aggro_radius = 200
   enemy.attack_range = 50
 
@@ -42,7 +46,7 @@ function Enemy.update(enemy, hero, delta)
 
   if enemy.state == Enemy.states.STAGGERED then
     Entity.staggered(enemy)
-    
+
   elseif enemy.state == Enemy.states.RECOVERING then
     Enemy.recover(enemy)
 
@@ -57,7 +61,7 @@ function Enemy.update(enemy, hero, delta)
   end
 end
 
-  
+
 function Enemy.attack(enemy, hero, delta)
   local enemy_frame = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
   local last_frame  = #enemy.animations[enemy.animation.name].frames
@@ -85,16 +89,16 @@ function Enemy.attack(enemy, hero, delta)
         foo()
       end
     end
-    
+
     if enemy.attack_sound_played == false then
       local sound = has_hit and "sword_hit" or "sword_miss"
       Soundbox.play_sound(sound, .5)
       enemy.attack_sound_played = true
     end
   end
-  
+
   Animation.replace(enemy, "attack1")
-  
+
   if enemy.animation.frame == last_frame then
     Enemy.start_recovering(enemy)
     enemy.attack_targets      = {}
@@ -107,17 +111,17 @@ function Enemy.move(enemy, hero, delta)
   local angle = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
   local velocity_x = math.cos(angle) * enemy.velocity_x * delta
   local velocity_y = math.sin(angle) * enemy.velocity_y * delta
-  
+
   enemy.animation.flip = velocity_x < 0
   enemy.vx = velocity_x < 0 and -1 or 1
   enemy.vy = velocity_y < 0 and -1 or 1
-  
+
   enemy.x = enemy.x + velocity_x
   Entity.resolve_horizontal_collision(enemy, { hero })
 
   enemy.y = enemy.y + velocity_y
   Entity.resolve_vertical_collision(enemy, { hero })
-  
+
   Animation.replace(enemy, "walk")
 end
 
@@ -131,20 +135,20 @@ function Enemy.recover(enemy)
   Animation.replace(enemy, "idle")
 
   enemy.recovering_frames = enemy.recovering_frames - 1
-  
+
   if enemy.recovering_frames == 0 then
     enemy.recovering_frames = nil
     enemy.state             = Enemy.states.IDLE
   end
 end
 
-  
+
 function Enemy.think(enemy, hero)
   if enemy.state == Enemy.states.STAGGERED then
     return
 
   elseif enemy.state == Enemy.states.RECOVERING then
-    return 
+    return
 
   else
     local distance =  Utils.dist(hero.x, hero.y, enemy.x, enemy.y)
@@ -165,6 +169,6 @@ end
 function Enemy.wound(enemy, hero)
   Entity.wound(enemy, hero)
 end
-  
+
 
 return Enemy
