@@ -21,17 +21,14 @@ function love.load()
   love.graphics.setLineStyle("rough")
   love.graphics.setLineWidth(1)
 
-  camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
-  hero   = Hero.new(250, 450)
-  -- foo    = Enemy.new(900, 500, { name = "foo" })
-  -- bar    = Enemy.new(500, 400, { name = "bar" })
-
   Soundbox.register_sound("sword_hit", "sounds/hit.wav")
   Soundbox.register_sound("sword_miss", "sounds/miss.wav")
   Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
   Soundbox.play_music("hilltop_asylum", 0.6)
 
-  level = Level.one(camera, hero)
+  camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
+  hero   = Hero.new(250, 450)
+  level  = Level.one(camera, hero)
 end
 
 
@@ -42,7 +39,6 @@ function love.update(delta)
   Entity.update(hero, enemies, level, delta)
   Level.trigger_waves(level, hero, camera)
   Camera.update(camera, delta)
-  Level.check_victory_conditions(level, enemies)
 
   for _, layer in ipairs(level.layers) do
     Layer.update(layer, camera, delta)

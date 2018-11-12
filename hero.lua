@@ -78,7 +78,7 @@ function Hero.attack(hero, enemies, delta)
 
         if Box.collides(real_hitbox, enemy_real_hurtbox) then
           hero.attack_targets[enemy.name] = true
-          hero.module.wound(hero, enemy)
+          Hero.wound(hero, enemy, level, enemies)
           has_hit = true
         end
       end
@@ -124,11 +124,14 @@ function Hero.new(x, y)
 end
 
 
-function Hero.wound(hero, enemy)
+function Hero.wound(hero, enemy, level)
   Entity.wound(hero, enemy)
+
   if enemy.health <= 0 then
     hero.fury = Utils.clamp(hero.fury + 15, 0, hero.max_fury)
-    Entity._entities[enemy.name] = nil
+    Enemy.die(enemy)
+    Level.check_victory_conditions(level, Entity.enemies())
+
   else
     hero.fury = Utils.clamp(hero.fury + 5, 0, hero.max_fury)
     Enemy.start_recovering(enemy)

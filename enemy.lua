@@ -166,8 +166,17 @@ function Enemy.think(enemy, hero)
 end
 
 
-function Enemy.wound(enemy, hero)
+function Enemy.wound(enemy, hero, level)
   Entity.wound(enemy, hero)
+
+  if hero.health <= 0 then
+    Level.game_over(level)
+  end
+end
+
+
+function Enemy.die(enemy)
+  Entity._entities[enemy.name] = nil
 end
 
 

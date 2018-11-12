@@ -27,7 +27,7 @@ end
 function Level.check_victory_conditions(level, enemies)
   local next_wave, trigger_x, trigger = Level.next_wave(level)
   if Utils.count(enemies) == 0 and next_wave == nil then
-    victory()
+    Level.victory(level)
   end
 end
 
@@ -37,13 +37,23 @@ function Level.spawn_wave(level, wave, camera)
     local y = math.random(level.min_y, level.max_y)
 
     if spawn.side == LEFT then
-      Enemy.new(camera.x + 100, y)
+      Enemy.new(camera.x + math.random(100, 150), y)
 
     else
-      local enemy = Enemy.new(camera.x + camera.width, y)
+      local enemy = Enemy.new(camera.x + camera.width - math.random(100, 150), y)
       enemy.animation.flip = true
     end
   end
+end
+
+
+function Level.victory(level)
+  victory()
+end
+
+
+function Level.game_over(level)
+  game_over()
 end
 
 
@@ -66,15 +76,15 @@ function Level.one(camera, hero)
     local waves = {
       {
         { enemy = "elf", side = RIGHT },
-        { enemy = "elf", side = RIGHT },
-        { enemy = "elf", side = LEFT }
+        -- { enemy = "elf", side = RIGHT },
+        -- { enemy = "elf", side = LEFT }
       },
       {
         { enemy = "elf", side = RIGHT },
         { enemy = "elf", side = RIGHT },
-        { enemy = "elf", side = RIGHT },
-        { enemy = "elf", side = LEFT },
-        { enemy = "elf", side = LEFT }
+        -- { enemy = "elf", side = RIGHT },
+        -- { enemy = "elf", side = LEFT },
+        -- { enemy = "elf", side = LEFT }
       },
     }
 

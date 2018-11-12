@@ -31,7 +31,7 @@ function Entity.new(name, sprite, options)
     attack_targets      = {},
     attack_sound_played = false
   }
-  
+
   return Entity._entities[name]
 end
 
@@ -92,22 +92,22 @@ function Entity.draw(entities, options)
       love.graphics.setColor(1, 1, 1)
     end
     love.graphics.draw(entity.sprite, frame.image, entity.x, entity.y, 0, scale_x, 1, frame.origin.x, frame.origin.y)
-  
+
     if (options or Entity._default_draw_options).print_state then
       love.graphics.print(entity.state, entity.x, entity.y)
       love.graphics.print(entity.animation.name .. " " .. entity.animation.frame .. "/" .. #entity.animations[entity.animation.name].frames, entity.x, entity.y + 15)
     end
-    
+
     if (options or Entity._default_draw_options).draw_boxes then
       love.graphics.setColor(1, 0, 0, .7)
       love.graphics.circle("line", entity.x, entity.y, 1)
-      
+
       for _, hitbox in pairs(frame.hitboxes or {}) do
         local box = Box.coordinates(entity, hitbox)
         love.graphics.setColor(1, 1, 0, .7)
         love.graphics.rectangle("line", box.x, box.y, box.width, box.height)
       end
-      
+
       for _, hurtbox in pairs(frame.hurtboxes or {}) do
         local box = Box.coordinates(entity, hurtbox)
         love.graphics.setColor(0, 0, 1, .7)
@@ -129,8 +129,8 @@ function Entity.resolve_horizontal_collision(entity, others)
   local entity_frame        = entity.animations[entity.animation.name].frames[entity.animation.frame]
   local entity_movebox      = entity_frame.moveboxes[1]
   local entity_real_movebox = Box.coordinates(entity, entity_movebox)
-  
-  for _, other in pairs(others) do 
+
+  for _, other in pairs(others) do
     local other_frame        = other.animations[other.animation.name].frames[other.animation.frame]
     local other_movebox      = other_frame.moveboxes[1]
     local other_real_movebox = Box.coordinates(other, other_movebox)
@@ -151,11 +151,11 @@ function Entity.resolve_vertical_collision(entity, others)
   local entity_frame        = entity.animations[entity.animation.name].frames[entity.animation.frame]
   local entity_movebox      = entity_frame.moveboxes[1]
   local entity_real_movebox = Box.coordinates(entity, entity_movebox)
-  
+
   for _, other in pairs(others) do
     local other_frame        = other.animations[other.animation.name].frames[other.animation.frame]
     local other_real_movebox = Box.coordinates(other, other_frame.moveboxes[1])
-    
+
     if Box.collides(entity_real_movebox, other_real_movebox) then
       if entity.vy == 1 then
         entity.y = other.y - other_real_movebox.height - 1
@@ -176,11 +176,11 @@ end
 function Entity.staggered(entity)
   local last_frame = #entity.animations["staggered"].frames
   Animation.replace(entity, "staggered")
-  
+
   if entity.animation.frame == last_frame then
     entity.state = Entity.states.IDLE
   end
 end
 
-  
+
 return Entity
