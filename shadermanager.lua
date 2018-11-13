@@ -87,8 +87,8 @@ vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords 
   
   new_shader_manager.is_first_time_bullet = false
   new_shader_manager.radius_bullet_time = 0.0 
-  new_shader_manager.speed_radius_acceleration = 350
-  new_shader_manager.speed_radius_deceleration = 510
+  new_shader_manager.speed_radius_acceleration = 200
+  new_shader_manager.speed_radius_deceleration = 800
   new_shader_manager.active_shader = basic_shader
   
   

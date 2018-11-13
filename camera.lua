@@ -35,9 +35,15 @@ end
 function Camera.draw(camera)
   love.graphics.setColor(1, 1, 1)
 
+  if camera.isShaking then
+    local dx = love.math.random(-2, 2)
+    local dy = love.math.random(-2, 2)
+    love.graphics.translate(dx, dy)
+    camera.isShaking = false
+  end
   for _, object in pairs(camera.objects) do
-    camera.offset_x = camera.x * 1/object.depth
-    camera.offset_y = camera.y * 1/object.depth
+    camera.offset_x = camera.x / object.depth
+    camera.offset_y = camera.y / object.depth
 
     love.graphics.push()
     love.graphics.translate(-camera.offset_x, - camera.offset_y)
@@ -59,6 +65,7 @@ function Camera.initialize(width, height)
     y        = 0,
     offset_x = 0,
     offset_y = 0,
+    isShaking = false,
     width    = width,
     height   = height,
     objects  = {},
