@@ -162,11 +162,13 @@ end
 function Hero.update_bullet_time_timer(hero, delta)
   if hero.bullet_time then
     hero.bullet_time_timer = hero.bullet_time_timer - delta
-
+    
     if hero.bullet_time_timer <= 0 then
+
       hero.bullet_time = false
     end
   end
+  Shadermanager.update_bullet_time(shader_manager, hero, delta)
 end
 
 

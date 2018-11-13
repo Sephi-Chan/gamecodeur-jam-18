@@ -12,7 +12,7 @@ Layer     = require("layers")
 Soundbox  = require("soundbox")
 Level     = require("level")
 UI        = require("ui")
-
+Shadermanager = require("shadermanager")
 
 function love.load()
   math.randomseed(os.time())
@@ -26,6 +26,8 @@ function love.load()
   Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
   Soundbox.play_music("hilltop_asylum", 0.6)
 
+
+  shader_manager = Shadermanager.initialize()
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
   hero   = Hero.new(250, 450)
   level  = Level.one(camera, hero)
@@ -45,8 +47,12 @@ end
 
 
 function love.draw()
+  Shadermanager.set(shader_manager.active_shader)
+  Shadermanager.send(shader_manager)
   Camera.draw(camera)
+  Shadermanager.unset()
   UI.draw(hero, level.enemies)
+
 end
 
 
