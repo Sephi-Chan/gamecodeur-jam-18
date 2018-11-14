@@ -1,8 +1,14 @@
 local Entity = {
+  LEFT  = -1,
+  RIGHT = 1,
+  UP    = -1,
+  DOWN  = 1,
+
   default_draw_options = {
     draw_boxes  = false,
     print_state = false
   },
+
   states = {
     IDLE      = "idle",
     ATTACKING = "attacking",
@@ -111,9 +117,10 @@ function Entity.resolve_horizontal_collision(entity, others)
     local other_real_movebox = Box.coordinates(other, other_movebox)
 
     if Box.collides(entity_real_movebox, other_real_movebox) then
-      if entity.vx == 1 then
+      if entity.vx == Entity.RIGHT then
         entity.x = other_real_movebox.x - (entity_movebox.width + entity_movebox.x)
-      elseif entity.vx == -1 then
+
+      elseif entity.vx == Entity.LEFT then
         local other_movebox_x2 = other.x + (other.animation.flip and -other_movebox.x or other_movebox.x + other_movebox.width)
         entity.x = other_movebox_x2 + entity_movebox.width + entity_movebox.x
       end

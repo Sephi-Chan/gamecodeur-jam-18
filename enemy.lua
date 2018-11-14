@@ -92,8 +92,6 @@ function Enemy.attack(enemy, hero, delta)
         enemy.attack_targets[hero.name] = true
         Enemy.wound(enemy, hero)
         has_hit = true
-      else
-        foo()
       end
     end
 
@@ -121,8 +119,8 @@ function Enemy.move(enemy, hero, delta)
   local velocity_y = math.sin(angle) * enemy.velocity_y * factor * delta
 
   enemy.animation.flip = velocity_x < 0
-  enemy.vx = velocity_x < 0 and -1 or 1
-  enemy.vy = velocity_y < 0 and -1 or 1
+  enemy.vx = velocity_x < 0 and Entity.LEFT or Entity.RIGHT
+  enemy.vy = velocity_y < 0 and Entity.UP or Entity.DOWN
 
   enemy.x = enemy.x + velocity_x
   Entity.resolve_horizontal_collision(enemy, { hero })
@@ -182,6 +180,33 @@ function Enemy.wound(enemy, hero, level)
     Level.game_over(level)
   end
 end
+
+
+function Enemy.nearest(enemies, hero, vx)
+  local min_distance = 999999
+  local nearest      = nil
+
+  for _, enemy in pairs(enemies) do
+    if vx == Entity.LEFT and enemy.x < hero.x then
+      local distance = Utils.dist(hero.x, hero.y, enemy.x, enemy.y)
+
+      if distance < min_distance then
+        min_distance = distance
+        nearest      = enemy
+      end
+    elseif vx == Entity.RIGHT and hero.x < enemy.x then
+      local distance = Utils.dist(hero.x, hero.y, enemy.x, enemy.y)
+
+      if distance < min_distance then
+        min_distance = distance
+        nearest      = enemy
+      end
+    end
+  end
+
+  return nearest, min_distance
+end
+
 
 
 return Enemy

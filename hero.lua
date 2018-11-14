@@ -1,14 +1,23 @@
 local Hero = {
-  BULLET_TIME_DURATION = 5
+  BULLET_TIME_DURATION           = 5,
+  DASH_DELAY_BETWEEN_KEY_PRESSES = 1,
+  DASH_MAX_DISTANCE              = 200,
+
+  states = {
+    DASHING = "dashing"
+  }
 }
 local Utils = require("lib.utils")
 
 
 function Hero.update(hero, level, delta)
-  Hero.update_bullet_time_timer(hero, delta)
+  update_bullet_time_timer(hero, delta)
+  update_dash_timer(hero, delta)
 
   if hero.state == Entity.states.STAGGERED then
     Entity.staggered(hero)
+
+  elseif hero.state == Hero.states.DASHING then
 
   elseif hero.state == Entity.states.ATTACKING then
     Hero.attack(hero, level.enemies, delta)
@@ -24,16 +33,16 @@ function Hero.move(hero, enemies, level, delta)
   hero.vx = 0
 
   if love.keyboard.isDown("z") and not love.keyboard.isDown("s") then
-    hero.vy = -1 -- up
+    hero.vy = Entity.UP
   elseif love.keyboard.isDown("s") and not love.keyboard.isDown("z") then
-    hero.vy = 1 -- down
+    hero.vy = Entity.DOWN
   end
 
   if love.keyboard.isDown("q") and not love.keyboard.isDown("d") then
-    hero.vx = -1 -- left
+    hero.vx = Entity.LEFT
     hero.animation.flip = true
   elseif love.keyboard.isDown("d") and not love.keyboard.isDown("q") then
-    hero.vx = 1 -- right
+    hero.vx = Entity.RIGHT
     hero.animation.flip = false
   end
 
@@ -120,6 +129,8 @@ function Hero.new(x, y)
   hero.fury     = 100
   hero.max_fury = 100
 
+  hero.dash_timer = 0
+
   for name, animation in pairs(animations) do
     Animation.attach(hero, Animation.new(hero.sprite, name, 0.5, animation.frames))
   end
@@ -160,11 +171,11 @@ function Hero.use_bullet_time_power(hero, level)
 end
 
 
-function Hero.update_bullet_time_timer(hero, delta)
+function update_bullet_time_timer(hero, delta)
   if hero.bullet_time then
     camera.isShaking = true
     hero.bullet_time_timer = hero.bullet_time_timer - delta
-    
+
     if hero.bullet_time_timer <= 0 then
 
       hero.bullet_time = false
@@ -173,6 +184,60 @@ function Hero.update_bullet_time_timer(hero, delta)
   Shadermanager.update_bullet_time(shader_manager, hero, delta)
 end
 
+
+function update_dash_timer(hero, delta)
+  hero.dash_timer = Utils.clamp(hero.dash_timer - delta, 0, 100)
+end
+
+
+function Hero.update_dash_controls(hero, level)
+  if 0 < hero.dash_timer and hero.last_horizontal_movement == Entity.LEFT and love.keyboard.isDown("q") then
+    start_dash(hero, level, Entity.LEFT)
+  elseif 0 < hero.dash_timer and hero.last_horizontal_movement == Entity.RIGHT and love.keyboard.isDown("d") then
+    start_dash(hero, level, Entity.RIGHT)
+  end
+
+  if love.keyboard.isDown("q") and not love.keyboard.isDown("d") then
+    hero.last_horizontal_movement = Entity.LEFT
+    hero.dash_timer               = Hero.DASH_DELAY_BETWEEN_KEY_PRESSES
+  elseif love.keyboard.isDown("d") and not love.keyboard.isDown("q") then
+    hero.last_horizontal_movement = Entity.RIGHT
+    hero.dash_timer               = Hero.DASH_DELAY_BETWEEN_KEY_PRESSES
+  end
+end
+
+
+function start_dash(hero, level, vx)
+  local enemy, distance = Enemy.nearest(level.enemies, hero, vx)
+
+  if enemy and distance <= Hero.DASH_MAX_DISTANCE then
+    local hero_frame         = hero.animations[hero.animation.name].frames[hero.animation.frame]
+    local hero_movebox       = hero_frame.moveboxes[1]
+    local enemy_frame        = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
+    local enemy_movebox      = enemy_frame.moveboxes[1]
+    local enemy_real_movebox = Box.coordinates(enemy, enemy_movebox)
+
+    enemy.state     = Entity.states.STAGGERED
+    hero.y          = enemy.y
+    hero.dash_timer = 0
+    hero.state      = Hero.states.DASHING
+
+    if vx == Entity.LEFT then
+      hero.x = enemy_real_movebox.x - (hero_movebox.width + hero_movebox.x) - 10
+      hero.animation.flip = false
+      hero.vx = Entity.LEFT
+
+    else
+      local enemy_movebox_x2 = enemy.x + (enemy.animation.flip and -enemy_movebox.x or enemy_movebox.x + enemy_movebox.width)
+      hero.x = enemy_movebox_x2 + hero_movebox.width + hero_movebox.x + 10
+      hero.animation.flip = true
+      hero.vx = Entity.RIGHT
+    end
+
+    hero.x = Utils.clamp(hero.x, 50, level.width - 50)
+    Entity.resolve_horizontal_collision(hero, level.enemies)
+  end
+end
 
 
 return Hero
