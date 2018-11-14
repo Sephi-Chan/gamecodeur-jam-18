@@ -174,6 +174,7 @@ end
 
 function Enemy.wound(enemy, hero, level)
   Entity.wound(enemy, hero)
+  Particulemanager.add_particule_effect(particule_manager, "blood", hero)
   camera.isShaking = true
   if hero.health <= 0 then
     Level.game_over(level)

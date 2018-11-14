@@ -13,6 +13,9 @@ Soundbox  = require("soundbox")
 Level     = require("level")
 UI        = require("ui")
 Shadermanager = require("shadermanager")
+Particulemanager = require("particulemanager")
+
+
 
 function love.load()
   math.randomseed(os.time())
@@ -28,9 +31,12 @@ function love.load()
 
 
   shader_manager = Shadermanager.initialize()
+  particule_manager = Particulemanager.initialize()
+  
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
   hero   = Hero.new(250, 450)
   level  = Level.one(camera, hero)
+  
 end
 
 
@@ -43,6 +49,7 @@ function love.update(delta)
   for _, layer in ipairs(level.layers) do
     Layer.update(layer, camera, delta)
   end
+  Particulemanager.update(particule_manager, delta)
 end
 
 
@@ -50,9 +57,10 @@ function love.draw()
   Shadermanager.set(shader_manager.active_shader)
   Shadermanager.send(shader_manager)
   Camera.draw(camera)
+  
   Shadermanager.unset()
   UI.draw(hero, level.enemies)
-
+  Particulemanager.draw(particule_manager)
 end
 
 
@@ -68,5 +76,7 @@ function love.keypressed(key)
 
   elseif key == "h" then
     Hero.use_heal_power(hero)
+  elseif key == "p" then   
+     Particulemanager.add_particule_effect(particule_manager, "heal", hero)
   end
 end

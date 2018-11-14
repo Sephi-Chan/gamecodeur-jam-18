@@ -130,7 +130,7 @@ end
 
 function Hero.wound(hero, enemy, level)
   Entity.wound(hero, enemy)
-
+  Particulemanager.add_particule_effect(particule_manager, "blood", enemy)
   if enemy.health <= 0 then
     hero.fury = Utils.clamp(hero.fury + 15, 0, hero.max_fury)
     Level.remove_enemy(level, enemy)
@@ -144,6 +144,7 @@ end
 
 function Hero.use_heal_power(hero)
   if hero.fury == hero.max_fury and hero.health < hero.max_health then
+    Particulemanager.add_particule_effect(particule_manager, "heal", hero)
     hero.fury   = 0
     hero.health = Utils.clamp(hero.health + 50, 10, hero.max_health)
   end
