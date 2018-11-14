@@ -6,6 +6,7 @@ Animation = require("animation")
 Entity    = require("entity")
 Hero      = require("hero")
 Enemy     = require("enemy")
+Boss      = require("boss")
 Box       = require("box")
 Camera    = require("camera")
 Layer     = require("layers")
@@ -29,14 +30,12 @@ function love.load()
   Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
   Soundbox.play_music("hilltop_asylum", 0.6)
 
-
   shader_manager = Shadermanager.initialize()
   particule_manager = Particulemanager.initialize()
-  
+
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
   hero   = Hero.new(250, 450)
   level  = Level.one(camera, hero)
-  
 end
 
 
@@ -57,9 +56,9 @@ function love.draw()
   Shadermanager.set(shader_manager.active_shader)
   Shadermanager.send(shader_manager)
   Camera.draw(camera)
-  
+
   Shadermanager.unset()
-  UI.draw(hero, level.enemies)
+  UI.draw(hero, level)
   Particulemanager.draw(particule_manager)
 end
 
@@ -76,7 +75,7 @@ function love.keypressed(key)
 
   elseif key == "h" then
     Hero.use_heal_power(hero)
-  elseif key == "p" then   
+  elseif key == "p" then
      Particulemanager.add_particule_effect(particule_manager, "heal", hero)
   end
 end

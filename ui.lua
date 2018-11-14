@@ -10,13 +10,13 @@ local UI = {
 local Utils = require("lib.utils")
 
 
-function UI.draw(hero, enemies)
+function UI.draw(hero, level)
   love.graphics.setColor(0, 0, 0)
   love.graphics.rectangle("fill", 0, 0, 800, 50)
 
   draw_bars(hero, 8, 7)
   draw_powers(hero, 230, 7)
-  print_mission(enemies, 400, 7)
+  print_mission(level, 400, 7)
 end
 
 
@@ -28,23 +28,11 @@ function draw_bars(hero, x, y)
 
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("Santé", x, y - 2)
-  love.graphics.rectangle("line", x + LABEL_WIDTH, y, BAR_WIDTH + 1, 13)
-  if 0 < health_ratio then
-    love.graphics.setColor(UI.health_color)
-    love.graphics.rectangle("fill", x + LABEL_WIDTH, y, BAR_WIDTH * health_ratio, 12)
-    love.graphics.setColor(UI.health_color_highlight)
-    love.graphics.rectangle("fill", x + LABEL_WIDTH + 1, y + 1, BAR_WIDTH * health_ratio - 2, 3)
-  end
+  draw_bar(x + LABEL_WIDTH, y, BAR_WIDTH + 1, 13, health_ratio, UI.health_color, UI.health_color_highlight)
 
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("Fureur", x, y + 20 - 2)
-  love.graphics.rectangle("line", x + LABEL_WIDTH, y + 20, BAR_WIDTH + 1, 13)
-  if 0 < fury_ratio then
-    love.graphics.setColor(UI.fury_color)
-    love.graphics.rectangle("fill", x + LABEL_WIDTH, y + 20, BAR_WIDTH * fury_ratio, 12)
-    love.graphics.setColor(UI.fury_color_highlight)
-    love.graphics.rectangle("fill", x + LABEL_WIDTH + 1, y + 20 + 1, BAR_WIDTH * fury_ratio - 2, 3)
-  end
+  draw_bar(x + LABEL_WIDTH,  y + 20, BAR_WIDTH + 1, 13, fury_ratio, UI.fury_color, UI.fury_color_highlight)
 end
 
 
@@ -81,17 +69,42 @@ function draw_powers(hero, x, y)
 end
 
 
-function print_mission(enemies, x, y)
-  local enemies_count = Utils.count(enemies)
-  love.graphics.setColor(1, 1, 1)
+function print_mission(level, x, y)
+  local boss = Level.boss(level)
 
-  if 1 == enemies_count then
-    love.graphics.print("Il reste encore un ennemi en vie !", x, y)
-  elseif 0 < enemies_count then
-    love.graphics.print(enemies_count .. " ennemis encore en vie.", x, y)
+  if boss then
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print("BOSS", x, y - 2)
+    local health_ratio = boss.health / boss.max_health
+    draw_bar(x + LABEL_WIDTH, y, BAR_WIDTH + 1, 13, health_ratio, UI.health_color, UI.health_color_highlight)
+
+  else
+    love.graphics.setColor(1, 1, 1)
+    local enemies_count = Utils.count(level.enemies)
+
+    if 1 == enemies_count then
+      love.graphics.print("Il reste encore un ennemi en vie !", x, y)
+    elseif 0 < enemies_count then
+      love.graphics.print(enemies_count .. " ennemis encore en vie.", x, y)
+    end
   end
 end
 
+
+function draw_bar(x, y, width, height, ratio, color, highlight_color)
+  love.graphics.setColor({ 1, 1, 1 })
+  love.graphics.rectangle("line", x, y, width + 1, height)
+
+  if 0 < ratio then
+    love.graphics.setColor(color)
+    love.graphics.rectangle("fill", x, y, width * ratio, height - 1)
+
+    if highlight_color then
+      love.graphics.setColor(highlight_color)
+      love.graphics.rectangle("fill", x + 1, y + 1, width * ratio - 2, 3)
+    end
+  end
+end
 
 
 return UI

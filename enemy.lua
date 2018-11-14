@@ -4,6 +4,8 @@ local Enemy = {
   FRAME_DURATION              = 0.5,
   BULLET_TIME_VELOCITY_FACTOR = 0.25,
   BULLET_TIME_FRAME_DURATION  = 1.5,
+  AGGRO_RADIUS                = 200,
+  ATTACK_RANGE                = 50,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
@@ -38,8 +40,8 @@ function Enemy.new(x, y, options)
     Animation.attach(enemy, Animation.new(enemy.sprite, name, Enemy.FRAME_DURATION, animation.frames))
   end
 
-  enemy.aggro_radius = 200
-  enemy.attack_range = 50
+  enemy.aggro_radius = Enemy.AGGRO_RADIUS
+  enemy.attack_range = Enemy.ATTACK_RANGE
 
   return enemy
 end
@@ -47,7 +49,7 @@ end
 
 
 function Enemy.update(enemy, hero, delta)
-  Enemy.think(enemy, hero)
+  enemy.module.think(enemy, hero)
 
   if enemy.state == Enemy.states.STAGGERED then
     Entity.staggered(enemy)

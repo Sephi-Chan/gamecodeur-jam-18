@@ -53,22 +53,19 @@ end
 function Entity.update(hero, level, delta)
   Hero.update(hero, level, delta)
   for _, enemy in pairs(level.enemies) do
-    Enemy.update(enemy, hero, delta)
+    enemy.module.update(enemy, hero, delta)
   end
 end
 
 
 function Entity.draw(entities, options)
+  love.graphics.setColor(1, 1, 1)
+
   for _, entity in ipairs(entities) do
     local frames  = entity.animations[entity.animation.name].frames
     local frame   = frames[entity.animation.frame] or frames[1]
     local scale_x = entity.animation.flip and -1 or 1
 
-    if entity.group == "enemy" then
-      love.graphics.setColor(1, .7, .7)
-    else
-      love.graphics.setColor(1, 1, 1)
-    end
     love.graphics.draw(entity.sprite, frame.image, entity.x, entity.y, 0, scale_x, 1, frame.origin.x, frame.origin.y)
 
     if (options or Entity.default_draw_options).print_state then

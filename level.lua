@@ -5,16 +5,16 @@ local Utils = require("lib.utils")
 
 
 function Level.trigger_waves(level, hero, camera)
-  local next_wave, trigger_x, trigger = Level.next_wave(level)
+  local next_wave, trigger_x, trigger = next_wave(level)
 
   if next_wave and trigger_x < hero.x then
     level.last_triggered_trigger = trigger
-    Level.spawn_wave(level, next_wave, camera)
+    spawn_wave(level, next_wave, camera)
   end
 end
 
 
-function Level.next_wave(level)
+function next_wave(level)
   local index = (level.last_triggered_trigger or 0) + 1
   local x     = level.wave_triggers[index]
   local wave  = level.waves[index]
@@ -24,39 +24,63 @@ end
 
 
 
-function Level.check_victory_conditions(level)
-  local next_wave, trigger_x, trigger = Level.next_wave(level)
+function check_victory_conditions(level)
+  local next_wave, trigger_x, trigger = next_wave(level)
   if Utils.count(level.enemies) == 0 and next_wave == nil then
     victory()
   end
 end
 
 
-function Level.spawn_wave(level, wave, camera)
+function spawn_wave(level, wave, camera)
   for i, spawn in ipairs(wave) do
-    local y = math.random(level.min_y, level.max_y)
-
-    if spawn.side == LEFT then
-      local enemy = Enemy.new(camera.x + math.random(100, 150), y)
-      level.enemies[enemy.name] = enemy
+    if spawn.enemy_type == "boss" then
+      spawn_boss(level, camera)
 
     else
-      local enemy = Enemy.new(camera.x + camera.width - math.random(100, 150), y)
-      enemy.animation.flip = true
-      level.enemies[enemy.name] = enemy
+      spawn_enemy(level, spawn.enemy_type, spawn.side, camera)
     end
   end
 end
 
 
+function spawn_enemy(level, enemy_type, side, camera)
+  local y = math.random(level.min_y, level.max_y)
+
+  if side == LEFT then
+    local enemy = Enemy.new(camera.x + math.random(100, 150), y)
+    level.enemies[enemy.name] = enemy
+
+  else
+    local enemy = Enemy.new(camera.x + camera.width - math.random(100, 150), y)
+    enemy.animation.flip = true
+    level.enemies[enemy.name] = enemy
+  end
+end
+
+
+function spawn_boss(level, camera)
+  local boss = Boss.new(camera.x + camera.width - 150, 450)
+  level.enemies["boss"] = boss
+  boss.animation.flip = true
+  Animation.replace(boss, "aoe")
+end
+
+
+
 function Level.remove_enemy(level, enemy)
   level.enemies[enemy.name] = nil
-  Level.check_victory_conditions(level)
+  check_victory_conditions(level)
 end
 
 
 function Level.game_over(level)
   game_over()
+end
+
+
+function Level.boss(level)
+  return level.enemies["boss"]
 end
 
 
@@ -73,22 +97,27 @@ function Level.one(camera, hero)
 
     local wave_triggers = {
       500,
-      900
+      1000,
+      1600
     }
 
     local waves = {
       {
-        { enemy = "elf", side = RIGHT },
-        -- { enemy = "elf", side = RIGHT },
-        -- { enemy = "elf", side = LEFT }
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = LEFT }
       },
       {
-        { enemy = "elf", side = RIGHT },
-        { enemy = "elf", side = RIGHT },
-        -- { enemy = "elf", side = RIGHT },
-        -- { enemy = "elf", side = LEFT },
-        -- { enemy = "elf", side = LEFT }
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = LEFT },
+        { enemy_type = "elf", side = LEFT }
       },
+      {
+        { enemy_type = "elf", side = LEFT },
+        { enemy_type = "boss", side = RIGHT },
+      }
     }
 
     local level = {
