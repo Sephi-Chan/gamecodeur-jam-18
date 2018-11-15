@@ -13,6 +13,7 @@ local Utils = require("lib.utils")
 function Hero.update(hero, level, delta)
   update_bullet_time_timer(hero, delta)
   update_dash_timer(hero, delta)
+  Entity.update_stagger_timer(hero, delta)
 
   if hero.state == Entity.states.STAGGERED then
     Entity.staggered(hero)
@@ -64,6 +65,7 @@ end
 
 
 function Hero.start_attack(hero)
+  if hero.state == Entity.states.STAGGERED then return end
   hero.state = Entity.states.ATTACKING
 end
 
@@ -148,7 +150,6 @@ function Hero.wound(hero, enemy, level)
 
   else
     hero.fury = Utils.clamp(hero.fury + 5, 0, hero.max_fury)
-    Enemy.start_recovering(enemy)
   end
 end
 
@@ -217,21 +218,22 @@ function start_dash(hero, level, vx)
     local enemy_movebox      = enemy_frame.moveboxes[1]
     local enemy_real_movebox = Box.coordinates(enemy, enemy_movebox)
 
-    enemy.state     = Entity.states.STAGGERED
+    Entity.stagger(enemy)
+
     hero.y          = enemy.y
     hero.dash_timer = 0
     hero.state      = Hero.states.DASHING
 
     if vx == Entity.LEFT then
-      hero.x = enemy_real_movebox.x - (hero_movebox.width + hero_movebox.x) - 10
+      hero.x              = enemy_real_movebox.x - (hero_movebox.width + hero_movebox.x) - 10
+      hero.vx             = Entity.LEFT
       hero.animation.flip = false
-      hero.vx = Entity.LEFT
 
     else
       local enemy_movebox_x2 = enemy.x + (enemy.animation.flip and -enemy_movebox.x or enemy_movebox.x + enemy_movebox.width)
-      hero.x = enemy_movebox_x2 + hero_movebox.width + hero_movebox.x + 10
+      hero.x              = enemy_movebox_x2 + hero_movebox.width + hero_movebox.x + 10
+      hero.vx             = Entity.RIGHT
       hero.animation.flip = true
-      hero.vx = Entity.RIGHT
     end
 
     hero.x = Utils.clamp(hero.x, 50, level.width - 50)

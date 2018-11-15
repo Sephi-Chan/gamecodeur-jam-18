@@ -6,6 +6,7 @@ local Enemy = {
   BULLET_TIME_FRAME_DURATION  = 1.5,
   AGGRO_RADIUS                = 200,
   ATTACK_RANGE                = 50,
+  RECOVERING_DURATION         = 1,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
@@ -43,12 +44,16 @@ function Enemy.new(x, y, options)
   enemy.aggro_radius = Enemy.AGGRO_RADIUS
   enemy.attack_range = Enemy.ATTACK_RANGE
 
+  enemy.recovering_timer = 0
+
   return enemy
 end
 
 
 
 function Enemy.update(enemy, hero, delta)
+  Entity.update_stagger_timer(enemy, delta)
+  update_recovering_timer(enemy, delta)
   enemy.module.think(enemy, hero)
 
   if enemy.state == Enemy.states.STAGGERED then
@@ -137,20 +142,22 @@ function Enemy.move(enemy, hero, delta)
 end
 
 function Enemy.start_recovering(enemy)
-  enemy.state             = Enemy.states.RECOVERING
-  enemy.recovering_frames = 50
+  enemy.state            = Enemy.states.RECOVERING
+  enemy.recovering_timer = Enemy.RECOVERING_DURATION
 end
 
 
 function Enemy.recover(enemy)
   Animation.replace(enemy, "idle")
 
-  enemy.recovering_frames = enemy.recovering_frames - 1
-
-  if enemy.recovering_frames == 0 then
-    enemy.recovering_frames = nil
-    enemy.state             = Enemy.states.IDLE
+  if enemy.recovering_timer == 0 then
+    enemy.state = Enemy.states.IDLE
   end
+end
+
+
+function update_recovering_timer(enemy, delta)
+  enemy.recovering_timer = Utils.clamp(enemy.recovering_timer - delta, 0, 100)
 end
 
 

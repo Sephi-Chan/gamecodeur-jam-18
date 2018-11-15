@@ -1,8 +1,11 @@
+local Utils = require("lib.utils")
 local Entity = {
   LEFT  = -1,
   RIGHT = 1,
   UP    = -1,
   DOWN  = 1,
+
+  STAGGER_DURATION = 1,
 
   default_draw_options = {
     draw_boxes  = false,
@@ -34,7 +37,8 @@ function Entity.new(name, sprite, options)
     module     = options.module or Entity,
 
     attack_targets      = {},
-    attack_sound_played = false
+    attack_sound_played = false,
+    stagger_timer       = 0
   }
 end
 
@@ -151,17 +155,27 @@ end
 
 function Entity.wound(attacker, target)
   target.health = target.health - 10
-  target.state = Entity.states.STAGGERED
+  Entity.stagger(target)
+end
+
+
+function Entity.stagger(entity)
+  entity.state         = Entity.states.STAGGERED
+  entity.stagger_timer = Entity.STAGGER_DURATION
 end
 
 
 function Entity.staggered(entity)
-  local last_frame = #entity.animations["staggered"].frames
   Animation.replace(entity, "staggered")
 
-  if entity.animation.frame == last_frame then
+  if entity.stagger_timer == 0 then
     entity.state = Entity.states.IDLE
   end
+end
+
+
+function Entity.update_stagger_timer(entity, delta)
+  entity.stagger_timer = Utils.clamp(entity.stagger_timer - delta, 0, 100)
 end
 
 
