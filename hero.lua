@@ -1,4 +1,5 @@
 local Hero = {
+  STAGGER_DURATION               = 0.2,
   BULLET_TIME_DURATION           = 5,
   DASH_DELAY_BETWEEN_KEY_PRESSES = 0.3,
   DASH_MAX_DISTANCE              = 250,

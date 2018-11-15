@@ -7,6 +7,7 @@ local Enemy = {
   AGGRO_RADIUS                = 200,
   ATTACK_RANGE                = 50,
   RECOVERING_DURATION         = 1,
+  STAGGER_DURATION            = 0.5,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",

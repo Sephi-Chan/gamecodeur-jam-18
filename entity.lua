@@ -5,8 +5,6 @@ local Entity = {
   UP    = -1,
   DOWN  = 1,
 
-  STAGGER_DURATION = 1,
-
   default_draw_options = {
     draw_boxes  = false,
     print_state = false
@@ -161,7 +159,7 @@ end
 
 function Entity.stagger(entity)
   entity.state         = Entity.states.STAGGERED
-  entity.stagger_timer = Entity.STAGGER_DURATION
+  entity.stagger_timer = entity.module.STAGGER_DURATION
 end
 
 
