@@ -1,7 +1,7 @@
 local Hero = {
   BULLET_TIME_DURATION           = 5,
-  DASH_DELAY_BETWEEN_KEY_PRESSES = 1,
-  DASH_MAX_DISTANCE              = 200,
+  DASH_DELAY_BETWEEN_KEY_PRESSES = 0.3,
+  DASH_MAX_DISTANCE              = 250,
 
   states = {
     DASHING = "dashing"

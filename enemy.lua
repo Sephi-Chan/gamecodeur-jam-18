@@ -70,6 +70,11 @@ end
 
 
 function Enemy.attack(enemy, hero, delta)
+  -- Face hero.
+  local angle          = Utils.angle(enemy.x, enemy.y, hero.x, hero.y)
+  local velocity_x     = math.cos(angle) * enemy.velocity_x
+  enemy.animation.flip = velocity_x < 0
+
   local enemy_frame = enemy.animations[enemy.animation.name].frames[enemy.animation.frame]
   local last_frame  = #enemy.animations[enemy.animation.name].frames
 
@@ -113,7 +118,7 @@ end
 
 
 function Enemy.move(enemy, hero, delta)
-  local angle  = Utils.angle( enemy.x, enemy.y, hero.x, hero.y)
+  local angle  = Utils.angle(enemy.x, enemy.y, hero.x, hero.y)
   local factor = hero.bullet_time and Enemy.BULLET_TIME_VELOCITY_FACTOR or 1
   local velocity_x = math.cos(angle) * enemy.velocity_x * factor * delta
   local velocity_y = math.sin(angle) * enemy.velocity_y * factor * delta
