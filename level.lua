@@ -27,7 +27,7 @@ end
 function check_victory_conditions(level)
   local next_wave, trigger_x, trigger = next_wave(level)
   if Utils.count(level.enemies) == 0 and next_wave == nil then
-    victory()
+    change_scene(Scenes.Victory)
   end
 end
 
@@ -75,7 +75,7 @@ end
 
 
 function Level.game_over(level)
-  game_over()
+  change_scene(Scenes.GameOver, { level })
 end
 
 
@@ -105,7 +105,7 @@ function Level.one(camera, hero)
       {
         { enemy_type = "elf", side = RIGHT },
         { enemy_type = "elf", side = RIGHT },
-        { enemy_type = "elf", side = LEFT }
+        { enemy_type = "elf", side = RIGHT }
       },
       {
         { enemy_type = "elf", side = RIGHT },

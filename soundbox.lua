@@ -16,11 +16,18 @@ end
 
 
 function Soundbox.play_music(name, volume)
-  local clone = Soundbox._sources[name]:clone()
-  clone:setVolume(volume or 1.0)
-  clone:setLooping(true)
-  love.audio.play(clone)
+  local source = Soundbox._sources[name]
+  source:setVolume(volume or 1.0)
+  source:setLooping(true)
+  love.audio.play(source)
 end
 
 
-return Soundbox 
+function Soundbox.stop()
+  for name, source in pairs(Soundbox._sources) do
+    source:stop()
+  end
+end
+
+
+return Soundbox
