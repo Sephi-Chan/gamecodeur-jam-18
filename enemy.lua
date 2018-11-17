@@ -7,7 +7,7 @@ local Enemy = {
   AGGRO_RADIUS                = 200,
   ATTACK_RANGE                = 50,
   RECOVERING_DURATION         = 1,
-  STAGGER_DURATION            = 0.5,
+  STAGGER_DURATION            = 0.4,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
@@ -19,7 +19,7 @@ local Enemy = {
 local UUID = require("lib.uuid")
 local Utils = require("lib.utils")
 
-local hero_sprite     = love.graphics.newImage("images/hero.png")
+local hero_sprite     = love.graphics.newImage("images/corrupted_elf.png")
 local hero_animations = Animation.load_json("metadata/hero.json")
 
 
