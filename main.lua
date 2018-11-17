@@ -27,9 +27,14 @@ Scenes = {
 function love.load()
   math.randomseed(os.time())
 
+  love.mouse.setVisible(false)
   love.graphics.setDefaultFilter("nearest")
   love.graphics.setLineStyle("rough")
   love.graphics.setLineWidth(1)
+
+  Soundbox.register_sound("sword_hit", "sounds/hit.wav")
+  Soundbox.register_sound("sword_miss", "sounds/miss.wav")
+  Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
 
   change_scene(Scenes.Menu)
 end

@@ -9,7 +9,7 @@ function Level.trigger_waves(level, hero, camera)
 
   if next_wave and trigger_x < hero.x then
     level.last_triggered_trigger = trigger
-    spawn_wave(level, next_wave, camera)
+    spawn_wave(level, next_wave, hero, camera)
   end
 end
 
@@ -32,34 +32,37 @@ function check_victory_conditions(level)
 end
 
 
-function spawn_wave(level, wave, camera)
+function spawn_wave(level, wave, hero, camera)
   for i, spawn in ipairs(wave) do
     if spawn.enemy_type == "boss" then
-      spawn_boss(level, camera)
+      spawn_boss(level, hero, camera)
 
     else
-      spawn_enemy(level, spawn.enemy_type, spawn.side, camera)
+      spawn_enemy(level, spawn.enemy_type, spawn.side, hero, camera)
     end
   end
 end
 
 
-function spawn_enemy(level, enemy_type, side, camera)
-  local y = math.random(level.min_y, level.max_y)
+function spawn_enemy(level, enemy_type, side, hero, camera)
+  local y       = math.random(level.min_y, level.max_y)
+  local options = { skin = hero.skin == "green" and "purple" or "green" }
 
   if side == LEFT then
-    local enemy = Enemy.new(camera.x + math.random(100, 150), y)
+    local x     = camera.x + math.random(100, 150)
+    local enemy = Enemy.new(x, y, options)
     level.enemies[enemy.name] = enemy
 
   else
-    local enemy = Enemy.new(camera.x + camera.width - math.random(100, 150), y)
+    local x     = camera.x + camera.width - math.random(100, 150)
+    local enemy = Enemy.new(x, y, options)
     enemy.animation.flip = true
     level.enemies[enemy.name] = enemy
   end
 end
 
 
-function spawn_boss(level, camera)
+function spawn_boss(level, hero, camera)
   local boss = Boss.new(camera.x + camera.width - 150, 450)
   level.enemies["boss"] = boss
   boss.animation.flip = true

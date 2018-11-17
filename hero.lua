@@ -11,6 +11,33 @@ local Hero = {
 local Utils = require("lib.utils")
 
 
+function Hero.new(x, y, skin)
+  local sprite      = skin == "green" and Entity.sprites.elf_green or Entity.sprites.elf_purple
+  local animations  = Entity.animations.elf
+  local hero        = Entity.new("Roger", sprite, {
+    x          = x,
+    y          = y,
+    velocity_x = 220,
+    velocity_y = 130,
+    health     = 100,
+    module     = Hero
+  })
+
+  hero.skin = skin
+
+  hero.fury     = 100
+  hero.max_fury = 100
+
+  hero.dash_timer = 0
+
+  for name, animation in pairs(animations) do
+    Animation.attach(hero, Animation.new(hero.sprite, name, 0.5, animation.frames))
+  end
+
+  return hero
+end
+
+
 function Hero.update(hero, level, delta)
   update_bullet_time_timer(hero, delta)
   update_dash_timer(hero, delta)
@@ -114,31 +141,6 @@ function Hero.attack(hero, enemies, delta)
     hero.attack_targets      = {}
     hero.attack_sound_played = false
   end
-end
-
-
-function Hero.new(x, y)
-  local sprite     = love.graphics.newImage("images/hero.png")
-  local animations = Animation.load_json("metadata/hero.json")
-  local hero       = Entity.new("Roger", sprite, {
-    x          = x,
-    y          = y,
-    velocity_x = 220,
-    velocity_y = 130,
-    health     = 100,
-    module     = Hero
-  })
-
-  hero.fury     = 100
-  hero.max_fury = 100
-
-  hero.dash_timer = 0
-
-  for name, animation in pairs(animations) do
-    Animation.attach(hero, Animation.new(hero.sprite, name, 0.5, animation.frames))
-  end
-
-  return hero
 end
 
 

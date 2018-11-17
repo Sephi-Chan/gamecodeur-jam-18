@@ -1,17 +1,14 @@
 local GameScene = {}
 
 
-function GameScene.load()
+function GameScene.load(skin)
   shader_manager    = Shadermanager.initialize()
   particule_manager = Particulemanager.initialize()
 
   camera = Camera.initialize(love.graphics.getWidth(), love.graphics.getHeight())
-  hero   = Hero.new(250, 450)
+  hero   = Hero.new(250, 450, skin)
   level  = Level.one(camera, hero)
 
-  Soundbox.register_sound("sword_hit", "sounds/hit.wav")
-  Soundbox.register_sound("sword_miss", "sounds/miss.wav")
-  Soundbox.register_sound("hilltop_asylum", "sounds/spiky_whimsical-fantasy_hilltop-asylum.mp3")
   Soundbox.play_music("hilltop_asylum", 0.6)
 end
 

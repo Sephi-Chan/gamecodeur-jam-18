@@ -14,8 +14,21 @@ local Entity = {
     IDLE      = "idle",
     ATTACKING = "attacking",
     STAGGERED = "staggered"
+  },
+
+  sprites = {
+    elf_green  = love.graphics.newImage("images/elf_green.png"),
+    elf_purple = love.graphics.newImage("images/elf_purple.png"),
+    druid      = love.graphics.newImage("images/druid.png")
+  },
+
+  animations = {
+    elf   = Animation.load_json("metadata/elf.json"),
+    druid = Animation.load_json("metadata/druid.json"),
   }
 }
+
+
 
 
 function Entity.new(name, sprite, options)

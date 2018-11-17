@@ -8,25 +8,33 @@ local Enemy = {
   ATTACK_RANGE                = 50,
   RECOVERING_DURATION         = 1,
   STAGGER_DURATION            = 0.4,
+
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
     HUNTING    = "hunting",
     ATTACKING  = "attacking",
     RECOVERING = "recovering",
+  },
+
+  types = {
+    elf = {
+      sprites = {
+        green  = Entity.sprites.elf_green,
+        purple = Entity.sprites.elf_purple,
+      },
+      animations = Entity.animations.elf
+    }
   }
 }
 local UUID = require("lib.uuid")
 local Utils = require("lib.utils")
 
-local hero_sprite     = love.graphics.newImage("images/corrupted_elf.png")
-local hero_animations = Animation.load_json("metadata/hero.json")
-
 
 function Enemy.new(x, y, options)
   local options    = options or {}
-  local sprite     = hero_sprite
-  local animations = hero_animations
+  local sprite     = Enemy.types.elf.sprites[options.skin]
+  local animations = Enemy.types.elf.animations
   local id         = options.name or UUID.uuid("enemy")
   local enemy      = Entity.new(id, sprite, {
     x          = x,
