@@ -58,7 +58,7 @@ function Menu.draw()
   draw_character_box(Menu.width/2 - 10 - Menu.box_width, 400, Menu.roger, Menu.selected_character == "Roger")
   draw_character_box(Menu.width/2 + 10, 400, Menu.marcel, Menu.selected_character == "Marcel")
 
-  local text = "-- Choisissez un personnage (Q ou D) et appuyer sur ESPACE pour commencer --"
+  local text = "-- Choisissez un personnage (Q ou D) et appuyez sur ESPACE pour commencer --"
   love.graphics.setFont(Menu.font)
   love.graphics.printf(text, 0, 350, Menu.width, "center")
 end
