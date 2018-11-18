@@ -44,23 +44,28 @@ end
 function Menu.draw()
   local text = "Grimwood"
   love.graphics.setFont(Menu.title_font)
-  love.graphics.printf(text, 0, 50, Menu.width, "center")
+  love.graphics.printf(text, 0, 30, Menu.width, "center")
 
+  local text = "Le haut druide des bois est devenu fou ! Autrefois son protecteur, il corrompt désormais\nla forêt ancestrale et ses habitants ! Vous seul pouvez suivre sa trace et l'éliminer pour\nenrayer la déchéance des lieux..."
+  love.graphics.setFont(Menu.font)
+  love.graphics.printf(text, 0, 110, Menu.width, "center")
+
+  love.graphics.setColor(0.7, 0.7, 0.7)
   local text = "Comment jouer ?\n\n"
     .. "Bougez avec les touches ZQSD : Z (haut), Q (gauche), S (bas) et D (droite).\n\n"
     .. "Frappez avec ESPACE pour terrasser vos ennemis et charger votre jauge de Fureur.\n\n"
     .. "Téléportez-vous derrière un ennemi en appuyant 2 fois rapidement\ndans sa direction (à gauche avec Q, à droite avec D). Frappez sans attendre !\n\n"
     .. "Quand votre jauge de Fureur est pleine, libérez-la !\nSoignez-vous (avec H) ou ralentissez l'écoulement du temps (avec B)."
   love.graphics.setFont(Menu.font)
-  love.graphics.printf(text, 0, 130, Menu.width, "center")
+  love.graphics.printf(text, 0, 190, Menu.width, "center")
 
-
-  draw_character_box(Menu.width/2 - 10 - Menu.box_width, 400, Menu.roger, Menu.selected_character == "Roger")
-  draw_character_box(Menu.width/2 + 10, 400, Menu.marcel, Menu.selected_character == "Marcel")
-
-  local text = "-- Choisissez un personnage (Q ou D) et appuyez sur ESPACE pour commencer --"
+  local text = "Choisissez un personnage (Q ou D) et appuyez sur ESPACE pour commencer."
   love.graphics.setFont(Menu.font)
-  love.graphics.printf(text, 0, 350, Menu.width, "center")
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.printf(text, 0, 400, Menu.width, "center")
+
+  draw_character_box(Menu.width/2 - 10 - Menu.box_width, 440, Menu.roger, Menu.selected_character == "Roger")
+  draw_character_box(Menu.width/2 + 10, 440, Menu.marcel, Menu.selected_character == "Marcel")
 end
 
 
