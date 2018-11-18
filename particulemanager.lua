@@ -36,7 +36,7 @@ function Particule_Manager.add_particule_effect(particule_manager, particule_eff
   if particule_effect == "heal" then
     active_system.effect = Particule_Manager.create_new_health_particule()
   elseif particule_effect == "aoe" then
-    active_system.effect =  Particule_Manager.create_aoe_particule()
+    active_system.effect =  Particule_Manager.create_aoe_particule(entity)
   elseif particule_effect == "elf" then
     active_system.effect = Particule_Manager.create_elf_particule(entity, sprite, frame)
   else
@@ -72,15 +72,16 @@ function Particule_Manager.create_new_health_particule()
   return health_particule
 end
 
-function Particule_Manager.create_aoe_particule()
+function Particule_Manager.create_aoe_particule(entity)
   local aoe_particule = {}
-   aoe_particule.img = love.graphics.newImage("images/aoe_particule.png")
+   aoe_particule.img = love.graphics.newImage("images/aoe2_paritcule.png")
    aoe_particule.timer= 0
    aoe_particule.duration= 3
 
    aoe_particule.system = love.graphics.newParticleSystem(aoe_particule.img, 1)
-   aoe_particule.system:setSizes(1.5)
-   aoe_particule.system:setParticleLifetime(1,3)
+   local norm = entity.radius_aoe_delta / Boss.RADIUS_AOE 
+   aoe_particule.system:setSizes(2 * norm , 1.4 * norm, 1.1 *norm )
+   aoe_particule.system:setParticleLifetime(1,2)
    --aoe_particule.system:setPosition( 10, -20 )
    aoe_particule.system:setEmitterLifetime(1)
   -- aoe_particule.system:setEmissionArea( "normal", 0, 3, 0, false )
