@@ -31,14 +31,14 @@ function Particule_Manager.draw(particule_manager)
 end
 
 
-function Particule_Manager.add_particule_effect(particule_manager, particule_effect, object_to_draw_on, sprite, frame)
+function Particule_Manager.add_particule_effect(particule_manager, particule_effect, object_to_draw_on, entity, sprite, frame)
   local active_system = {}
   if particule_effect == "heal" then
     active_system.effect = Particule_Manager.create_new_health_particule()
   elseif particule_effect == "aoe" then
     active_system.effect =  Particule_Manager.create_aoe_particule()
   elseif particule_effect == "elf" then
-    active_system.effect = Particule_Manager.create_elf_particule(sprite, frame)
+    active_system.effect = Particule_Manager.create_elf_particule(entity, sprite, frame)
   else
     active_system.effect = Particule_Manager.create_new_blood_particule()
   end
@@ -92,31 +92,34 @@ function Particule_Manager.create_aoe_particule()
   
 end
 
-function Particule_Manager.create_elf_particule(sprite, frame)
-    local elf_tp = {}
-   --elf_tp.img = love.graphics.newImage(frame)
-   elf_tp.timer= 0
-   elf_tp.duration= 0.5
-   
-   x, y, w, h = frame:getViewport()
-   local canvas = love.graphics.newCanvas(w, h)
-   love.graphics.setCanvas(canvas)
-   love.graphics.draw(sprite, frame,0,0)
+function Particule_Manager.create_elf_particule(entity ,sprite, frame)
+  
+
+
+  local elf_tp = {}
+  elf_tp.timer= 0
+  elf_tp.duration= 0.5
+
+  local x, y, w, h = frame:getViewport()
+  local canvas = love.graphics.newCanvas(w, h)
+  love.graphics.setCanvas(canvas)
+  if entity.vx == 1 then
+   love.graphics.draw(sprite,frame,0,0,0,0.9)
+  else
+    love.graphics.draw(sprite,frame, w,0,0,-0.9,1)
+  end
+
    love.graphics.setCanvas()
    
    elf_tp.system = love.graphics.newParticleSystem(canvas, 1)
-   elf_tp.system:setSizes(0.9)
    elf_tp.system:setParticleLifetime(1,1)
-   --aoe_particule.system:setPosition( 10, -20 )
    elf_tp.system:setEmitterLifetime(1)
-  -- aoe_particule.system:setEmissionArea( "normal", 0, 3, 0, false )
    elf_tp.system:setEmissionRate(100)
-   --aoe_particule.system:setRadialAcceleration(15,30)
-   elf_tp.system:setColors(25, 25, 255, 255, 25, 25, 255, 0) -- Fade to transparency.
+   elf_tp.system:setColors(0, 0, 255, 255, 100, 100, 255, 0) -- Fade to transparency.
 
   return elf_tp
-  
-  
+
+
   
 end
 

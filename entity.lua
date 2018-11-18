@@ -161,11 +161,11 @@ function Entity.resolve_vertical_collision(entity, others)
       
       
       local pos = {x = entity.x, y= entity.y}
-      Particulemanager.add_particule_effect(particule_manager, "elf", pos, entity.sprite, frame.image )
-      if entity.velocity_x <0 then
-        entity.x = entity.x -30
+      Particulemanager.add_particule_effect(particule_manager, "elf", pos, entity, entity.sprite, frame.image )
+      if entity.vx == Entity.RIGHT then
+        entity.x = entity.x -15
       else
-        entity.x = entity.x +30
+        entity.x = entity.x +15
       end
       
       
