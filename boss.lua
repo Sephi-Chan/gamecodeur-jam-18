@@ -12,7 +12,7 @@ local Boss = {
   RADIUS_AOE_SPEED = 75,
   RECOVERING_DURATION  = 1,
   STAGGER_DURATION    = 0.4,
-  HEALTH = 100,
+  HEALTH = 200,
   states = {
     IDLE       = "idle",
     STAGGERED  = "staggered",
@@ -246,11 +246,8 @@ function Boss.aoe(boss, hero, delta)
       boss.radius_aoe_delta = boss.radius_aoe_delta + Boss.RADIUS_AOE_SPEED 
       
       local mesure = 360 /20
-      for i=1,20 do
-        angle = math.rad(mesure*i) <= math.rad(360) and math.rad(0 + mesure*i)  or math.rad(0)
-        local table = {x = boss.x + math.cos(angle)*boss.radius_aoe_delta, y = boss.y + math.sin(angle)*boss.radius_aoe_delta}
-        Particulemanager.add_particule_effect(particule_manager, "aoe", table)
-      end   
+        local table = {x = boss.x, y = boss.y -20}
+        Particulemanager.add_particule_effect(particule_manager, "aoe", table, boss)  
       
       if distance <  boss.radius_aoe_delta then
       Boss.wound(boss, hero)
@@ -299,13 +296,14 @@ end
 
 
 function Boss.update(boss, hero, delta)
-
+  local factor = hero.bullet_time and Boss.BULLET_TIME_VELOCITY_FACTOR or 1
+  local delta = delta *factor
   Entity.update_stagger_timer(boss, delta)
   update_recovering_timer(boss, delta)
   boss.module.think(boss, hero)
   Boss.phase(boss, delta)
-  local factor = hero.bullet_time and Boss.BULLET_TIME_VELOCITY_FACTOR or 1
-  local delta = delta *factor
+
+  
   if boss.state == Boss.states.STAGGERED then
     --Entity.staggered(boss)
 
