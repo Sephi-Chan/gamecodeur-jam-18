@@ -26,6 +26,8 @@ Scenes = {
 
 function love.load()
   math.randomseed(os.time())
+  love.window.setTitle("Grimwood")
+
 
   love.mouse.setVisible(false)
   love.graphics.setDefaultFilter("nearest")
