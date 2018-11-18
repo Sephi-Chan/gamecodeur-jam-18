@@ -154,6 +154,21 @@ function Entity.resolve_vertical_collision(entity, others)
     local other_real_movebox = Box.coordinates(other, other_frame.moveboxes[1])
 
     if Box.collides(entity_real_movebox, other_real_movebox) then
+      
+      local frames  = entity.animations[entity.animation.name].frames
+      local frame   = frames[entity.animation.frame] or frames[1]
+      
+      
+      
+      local pos = {x = entity.x, y= entity.y}
+      Particulemanager.add_particule_effect(particule_manager, "elf", pos, entity.sprite, frame.image )
+      if entity.velocity_x <0 then
+        entity.x = entity.x -30
+      else
+        entity.x = entity.x +30
+      end
+      
+      
       if entity.vy == 1 then
         entity.y = other.y - other_real_movebox.height - 1
       elseif entity.vy == -1 then
@@ -171,8 +186,11 @@ end
 
 
 function Entity.stagger(entity)
-  entity.state         = Entity.states.STAGGERED
-  entity.stagger_timer = entity.module.STAGGER_DURATION
+  if entity.isImuneStagered ~= nil then
+  else
+    entity.state         = Entity.states.STAGGERED
+    entity.stagger_timer = entity.module.STAGGER_DURATION
+  end
 end
 
 

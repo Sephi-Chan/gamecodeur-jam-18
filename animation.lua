@@ -41,13 +41,15 @@ end
 
 
 function animate_entity(entity, hero, delta)
-  entity.animation.timer = entity.animation.timer + delta
+  
   local duration = entity.animations[entity.animation.name].duration
-
+  local factor = 1
   if hero.bullet_time and entity.group == Enemy.GROUP then
-    duration = Enemy.BULLET_TIME_FRAME_DURATION
+    --duration = Enemy.BULLET_TIME_FRAME_DURATION
+    factor =  0.25 
   end
-
+  
+  entity.animation.timer = entity.animation.timer + delta *factor
   if entity.animation.timer >= duration then
     entity.animation.timer = entity.animation.timer - duration
   end

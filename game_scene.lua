@@ -28,13 +28,15 @@ end
 
 
 function GameScene.draw()
-  Shadermanager.set(shader_manager.active_shader)
-  Shadermanager.send(shader_manager)
-  Camera.draw(camera)
 
-  Shadermanager.unset()
-  UI.draw(hero, level)
-  Particulemanager.draw(particule_manager)
+    Shadermanager.set(shader_manager.active_shader)
+    Shadermanager.send(shader_manager)
+    Camera.draw(camera)
+
+    Shadermanager.unset()
+    UI.draw(hero, level)
+    Particulemanager.draw(particule_manager)
+
 end
 
 

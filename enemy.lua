@@ -183,7 +183,7 @@ function Enemy.think(enemy, hero)
     if distance < enemy.aggro_radius then
       enemy.state = Enemy.states.HUNTING
 
-      if distance < enemy.attack_range then
+      if distance < enemy.attack_range and math.abs( hero.y - enemy.y)<=10 then
         enemy.state = Enemy.states.ATTACKING
       end
     else
