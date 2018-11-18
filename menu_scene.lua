@@ -46,7 +46,7 @@ function Menu.draw()
   love.graphics.setFont(Menu.title_font)
   love.graphics.printf(text, 0, 30, Menu.width, "center")
 
-  local text = "Le haut druide des bois est devenu fou ! Autrefois son protecteur, il corrompt désormais\nla forêt ancestrale et ses habitants ! Vous seul pouvez suivre sa trace et l'éliminer pour\nenrayer la déchéance des lieux..."
+  local text = "L'archidruide des bois est devenu fou ! Autrefois son protecteur, il corrompt désormais\nla forêt ancestrale et ses habitants ! Vous seul pouvez suivre sa trace et l'éliminer pour\nenrayer la déchéance des lieux..."
   love.graphics.setFont(Menu.font)
   love.graphics.printf(text, 0, 110, Menu.width, "center")
 

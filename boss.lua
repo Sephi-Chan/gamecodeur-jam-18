@@ -228,8 +228,8 @@ function Boss.casting(boss, hero, delta)
     boss.state = Boss.states.AEOING
     boss.timer_casting = 0
   else
-    boss.timer_casting = boss.timer_casting + delta 
-  end  
+    boss.timer_casting = boss.timer_casting + delta
+  end
 end
 
 function Boss.aoe(boss, hero, delta)
@@ -238,28 +238,28 @@ function Boss.aoe(boss, hero, delta)
       if boss.radius_aoe_delta >= Boss.RADIUS_AOE then
         boss.radius_aoe_delta = 0
         boss.timer_aoe = 0
-        boss.state = Boss.states.RECOVERING   
+        boss.state = Boss.states.RECOVERING
         return
       end
-      
-      
-      boss.radius_aoe_delta = boss.radius_aoe_delta + Boss.RADIUS_AOE_SPEED 
-      
+
+
+      boss.radius_aoe_delta = boss.radius_aoe_delta + Boss.RADIUS_AOE_SPEED
+
       local mesure = 360 /20
         local table = {x = boss.x, y = boss.y -20}
-        Particulemanager.add_particule_effect(particule_manager, "aoe", table, boss)  
-      
+        Particulemanager.add_particule_effect(particule_manager, "aoe", table, boss)
+
       if distance <  boss.radius_aoe_delta then
       Boss.wound(boss, hero)
       end
-      
-      
-      
+
+
+
       boss.timer_aoe = 0
     else
       boss.timer_aoe = boss.timer_aoe +delta
     end
-    
+
 
 end
 
@@ -289,7 +289,7 @@ function Boss.phase(boss, delta)
     boss.velocity_y = boss.velocity_y * 1.25
   end
 
-  
+
 end
 
 
@@ -303,7 +303,7 @@ function Boss.update(boss, hero, delta)
   boss.module.think(boss, hero)
   Boss.phase(boss, delta)
 
-  
+
   if boss.state == Boss.states.STAGGERED then
     --Entity.staggered(boss)
 
@@ -320,7 +320,7 @@ function Boss.update(boss, hero, delta)
     Boss.casting(boss, hero, delta)
   elseif boss.state == Boss.states.AEOING then
     Boss.aoe(boss, hero, delta)
-  
+
   elseif boss.state == Boss.states.IDLE then
     Animation.replace(boss, "idle")
   end

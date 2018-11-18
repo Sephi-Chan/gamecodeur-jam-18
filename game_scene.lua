@@ -16,7 +16,7 @@ end
 function GameScene.update(delta)
   Animation.animate_entities(level.enemies, hero, delta)
   Entity.update(hero, level, delta)
-  Level.trigger_waves(level, hero, camera)
+  Level.update(level, hero, camera, delta)
   Camera.update(camera, delta)
 
   for _, layer in ipairs(level.layers) do
@@ -28,15 +28,13 @@ end
 
 
 function GameScene.draw()
+  Shadermanager.set(shader_manager.active_shader)
+  Shadermanager.send(shader_manager)
+  Camera.draw(camera)
 
-    Shadermanager.set(shader_manager.active_shader)
-    Shadermanager.send(shader_manager)
-    Camera.draw(camera)
-
-    Shadermanager.unset()
-    UI.draw(hero, level)
-    Particulemanager.draw(particule_manager)
-
+  Shadermanager.unset()
+  UI.draw(hero, level)
+  Particulemanager.draw(particule_manager)
 end
 
 

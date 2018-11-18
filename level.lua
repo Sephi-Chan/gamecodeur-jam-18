@@ -1,15 +1,32 @@
-local Level = {}
+local Level = { DELAY_BEFORE_VICTORY = 2 }
 local LEFT  = 1
 local RIGHT = 2
 local Utils = require("lib.utils")
 
 
-function Level.trigger_waves(level, hero, camera)
+function Level.update(level, hero, camera, delta)
+  trigger_waves(level, hero, camera)
+  update_victory_timer(level, delta)
+end
+
+
+function trigger_waves(level, hero, camera)
   local next_wave, trigger_x, trigger = next_wave(level)
 
   if next_wave and trigger_x < hero.x then
     level.last_triggered_trigger = trigger
     spawn_wave(level, next_wave, hero, camera)
+  end
+end
+
+
+function update_victory_timer(level, delta)
+  if level.victory_timer then
+    level.victory_timer = Utils.clamp(level.victory_timer - delta, 0, 100)
+
+    if level.victory_timer == 0 then
+      change_scene(Scenes.Victory)
+    end
   end
 end
 
@@ -27,7 +44,7 @@ end
 function check_victory_conditions(level)
   local next_wave, trigger_x, trigger = next_wave(level)
   if Utils.count(level.enemies) == 0 and next_wave == nil then
-    change_scene(Scenes.Victory)
+    level.victory_timer = Level.DELAY_BEFORE_VICTORY
   end
 end
 
@@ -100,8 +117,11 @@ function Level.one(camera, hero)
 
     local wave_triggers = {
       500,
-      1000,
-      1600
+      1100,
+      1700,
+      2300,
+      2800,
+      3300
     }
 
     local waves = {
@@ -118,7 +138,26 @@ function Level.one(camera, hero)
         { enemy_type = "elf", side = LEFT }
       },
       {
-        { enemy_type = "elf", side = LEFT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = LEFT }
+      },
+      {
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+      },
+      {
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
+      },
+      {
+        { enemy_type = "elf", side = RIGHT },
+        { enemy_type = "elf", side = RIGHT },
         { enemy_type = "boss", side = RIGHT },
       }
     }
@@ -133,6 +172,7 @@ function Level.one(camera, hero)
       last_triggered_trigger = nil,
       wave_triggers          = wave_triggers,
       waves                  = waves,
+      victory_timer          = nil,
 
       layers = {
         front_herbs,

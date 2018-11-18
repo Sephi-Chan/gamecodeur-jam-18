@@ -17,11 +17,11 @@ function Victory.draw()
   love.graphics.setFont(Victory.title_font)
   love.graphics.printf(text, 0, 100, Victory.width, "center")
 
-  local text = "Merci d'avoir joué !!"
+  local text = "Vous avez ramené la paix sur ces bois ancestraux. Libérés, les habitants de la forêt vous acclament."
   love.graphics.setFont(Victory.font)
   love.graphics.printf(text, 0, 180, Victory.width, "center")
 
-  local text = "-- Appuyez sur ECHAP pour retourner au menu --"
+  local text = "Appuyez sur ECHAP pour retourner au menu."
   love.graphics.setFont(Victory.font)
   love.graphics.printf(text, 0, 240, Victory.width, "center")
 end
